@@ -1,0 +1,11 @@
+{
+  "notifier-http": {
+    "host": "localhost",
+    "port": 3434,
+    "use_basic_auth": true
+  },
+  "auth": {
+      "username": "tomoe.yamanaka",
+      "password": "oith9peJ"
+  }
+}

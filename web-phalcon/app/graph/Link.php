@@ -1,0 +1,74 @@
+<?php
+namespace NetAssist\Graph;
+
+/**
+*  Represents graph link between nodes
+*  @property_read int $id Identifier of record in graph database
+*/
+class Link implements \JsonSerializable {
+  /**
+   *  @var int Identifier record in database
+   */
+  private $_id;
+
+  /**
+   *  @var string Comment for link
+   */
+  public $comment;
+
+  /**
+   * @var \NetAssist\Graph\Node Source node
+   */
+  public $src_node;
+
+  /** @var int Source port number */
+  public $src_port;
+
+  /** @var \NetAssist\Graph\Node Destination node */
+  public $dst_node;
+
+  /** @var int Destination port number */
+  public $dst_port;
+
+  /** @var int Link speed in mbps */
+  public $link_speed;
+
+  public function __get($property){
+    if($property == "id")
+      return $this->_id;
+    if(property_exists($this, $property))
+      return $this->_property;
+  }
+
+  /**
+  * Performs JSON serialzation preparation
+  * @return array Repsentation of object for JSON serializer
+  */
+  public function jsonSerialize() {
+    return [
+      'id' => $this->_id,
+      'comment' => $this->comment,
+      'src' => [
+        'id' => $this->src_node->id,
+        'db_sw_id' => $this->src_node->db_id,
+        'port_id' => $this->src_port
+      ],
+      'dst' => [
+        'id' => $this->dst_node->id,
+        'db_sw_id' => $this->dst_node->db_id,
+        'port_id' => $this->dst_port,
+      ],
+      'link_speed' => $this->link_speed
+    ];
+  }
+
+  /**
+  * Constructor
+  * @param int Identifier of link in database
+  */
+  function __construct($id){
+    $this->_id = $id;
+  }
+
+}
+?>

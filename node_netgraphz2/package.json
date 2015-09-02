@@ -1,0 +1,12 @@
+{
+  "name": "netgraphzdb",
+  "description": "NetGraphz2 database node.js connection library",
+  "version": "0.1.0",
+  "dependencies": {
+    "node-neo4j": "~2.0.3",
+	"extend": "~3.0.0"
+  },
+  "engines": {
+    "node": ">= 0.8.0"
+  }
+}

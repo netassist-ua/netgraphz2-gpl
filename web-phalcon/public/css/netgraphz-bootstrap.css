@@ -1,0 +1,27 @@
+header.navbar {
+	background-color: gainsboro;
+
+}
+.page-header {
+	padding-top: 20px;
+}
+
+.container {
+	width: auto;
+	padding: 0 40px 0 40px;
+}
+.toolstrip {
+	height: 35px;
+}
+
+.toolstrip-left {
+	float: left;
+}
+
+.toolstrip-right {
+	float: right;
+}
+
+#node-name-search {
+	margin: 5px 0 -7px 10px; //fucking precise, hate this css shit
+}

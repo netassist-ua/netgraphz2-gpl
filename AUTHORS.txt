@@ -1,0 +1,26 @@
+Project started by NetAssist LLC.
+We also provide internet services, hosting, peering services for customers.
+
+Developers:
+
+  Philippe Duke
+
+    philippe46@netassist.ua
+    philippe46@henkuaile.cn
+
+  Arteyom Arnautov (features approvement)
+
+    triar@netassist.ua
+
+Contacts:
+  
+  NetAssist LLC
+  ISP 
+  Ukraine, Kyiv
+  Striletska str. 7/9 office 96
+  
+  http://netassist.ua
+
+  Maxim Tulyev (CEO)
+  maxtul@netassist.ua
+  

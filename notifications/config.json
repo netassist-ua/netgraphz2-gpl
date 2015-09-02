@@ -1,0 +1,24 @@
+{
+  "notificator": {
+    "port": 3433
+  },
+  "host": "localhost",
+  "netgraphzdb": {
+    "port": 7474,
+    "useAuth": true,
+    "auth": {
+      "login": "neo4j",
+      "password": "changed"
+    }
+  },
+  "api": {
+    "authEnabled": true,
+    "authTokensPath": "auth_tokens.json",
+    "listenAll": false,
+    "port": 3434,
+    "address": "127.0.0.1",
+    "icinga": {
+      "broadcast_user": "_netgraphz2_notify_all"
+    }
+  }
+}

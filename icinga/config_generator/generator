@@ -1,0 +1,149 @@
+#!/usr/bin/env python
+
+import sys
+import os
+import argparse
+import json
+import py2neo as neo
+
+
+scanned_nodes_id = []
+nodes = []
+connections = {}
+nodes_by_id = {}
+
+def add_connection(nodeFrom, nodeTo):
+    if(connections.has_key(nodeFrom)):
+        if not nodeTo in connections[nodeFrom]:
+            connections[nodeFrom].append(nodeTo)
+        else:
+            print "just another link"
+    else:
+        connections[nodeFrom] = [nodeTo]
+
+def get_relationships_of_node(node_id):
+    str_query = 'MATCH (n:{0})-[r:LINKS_TO]->(m:{0}) WHERE Id(n)={1} RETURN r'.format(
+        config["neo4j"]["nodesName"], int(node_id)
+    );
+    return graph.cypher.execute(str_query);
+
+def get_node_full(node_id):
+    str_query = 'MATCH (n:{0}) WHERE Id(n)={1} RETURN n'.format(
+        config["neo4j"]["nodesName"], int(node_id)
+    );
+    res = graph.cypher.execute(str_query)
+    return res[0][0]
+
+def replace_all(text, dic):
+    for i, j in dic.iteritems():
+        text = text.replace(i, j)
+    return text
+
+def save_config(file_name, text):
+    path = os.path.join(args.output_folder[0], file_name)
+    fd = open(path, 'w')
+    fd.write(text)
+    fd.flush()
+    fd.close()
+
+def need_make_cfg(node):
+    not_empty = node.properties.has_key("icinga_name") and node.properties.has_key("ip_address")
+    if(not not_empty): return False
+    has_ip_and_name = len(node["ip_address"].strip()) > 0 and len(node["icinga_name"].strip()) > 0
+    return has_ip_and_name
+
+def make_connections_config(node_id):
+    cfg = ""
+    if(connections.has_key(node_id)):
+        cons = connections[node_id]
+    else: cons = []
+    for con in cons:
+        dict_dep_replace = {
+            "{hostname}": nodes_by_id[node_id]["icinga_name"],
+            "{other_hostname}": nodes_by_id[con]["icinga_name"]
+        }
+        cfg += "\n{0}\n".format(replace_all(d_tpl, dict_dep_replace))
+    return cfg
+
+def make_node_config(node_id):
+    dict_host_replace = {
+        "{hostname}": nodes_by_id[node_id]["icinga_name"],
+        "{ip_address}": nodes_by_id[node_id]["ip_address"],
+        "{start_hostname}": start_host["icinga_name"],
+        "{deps}": make_connections_config(node_id)
+    }
+    return replace_all(h_tpl, dict_host_replace)
+
+
+def dfs(node_id, usable_parent_id):
+    node = get_node_full(node_id)
+    nodes_by_id[node_id] = node
+    make_cfg = need_make_cfg(node)
+    scanned_nodes_id.append(node_id)
+    prev_usable_parent_id = usable_parent_id
+
+    print "Start from: {0}".format(node["name"])
+    if not (usable_parent_id == None): #if it's not a root node
+        add_connection(usable_parent_id, node_id)
+    if make_cfg:
+        nodes.append(node_id)
+        usable_parent_id = node_id
+    print "scanning children..."
+    for rel in graph.match(start_node=node):
+        if not rel.end_node._id in scanned_nodes_id:
+            print "DFS to: {0}".format(rel.end_node["name"])
+            dfs(rel.end_node._id, usable_parent_id);
+        #else:
+        #    cond = not (prev_usable_parent_id == rel.end_node._id)
+        #    if cond:
+        #        print rel.end_node["name"]
+        #        print nodes_by_id[usable_parent_id]["name"]
+        #        print "Found another path to {0}".format(rel.end_node["name"])
+        #        add_connection(usable_parent_id, rel.end_node._id)
+    print "DFS end: {0}".format(node["name"])
+    pass
+
+
+#    if make_cfg:
+#        dict_host_replace["{children}"] = dep_config
+#        node_config = replace_all(h_tpl, dict_host_replace)
+#        save_config('host_{0}.cfg'.format(node['icinga_name']), node_config);
+
+def open_and_read( file ):
+    with open(file, 'r') as fd:
+        return fd.read()
+
+
+
+description="""Icinga config generator from nodes graph database"""
+parser = argparse.ArgumentParser(description=description, version='1.0rc2')
+parser.add_argument("config",
+    help="Configuration JSON file path (see README and manual)", nargs=1, metavar="config_file.json")
+parser.add_argument("output_folder",
+    help="Output folder for config files", nargs=1, metavar="output_folder")
+parser.add_argument("start_host",
+    help="Starting host for DFS graph scanning", nargs=1, metavar="start_host")
+args = parser.parse_args()
+
+h_tpl = open_and_read('host_template.cfg')
+d_tpl = open_and_read('dependency_template.tpl')
+
+with open(args.config[0], 'r') as fd:
+    config = json.load(fd);
+
+neo.authenticate(config["neo4j"]["host_port"],
+                 config["neo4j"]["username"],
+                 config["neo4j"]["password"])
+neo.watch("httpstream")
+graph = neo.Graph(config["neo4j"]["url"])
+
+str_query = 'MATCH (n:{0}) WHERE n.name=\'{1}\' RETURN Id(n)'.format(
+    config["neo4j"]["nodesName"], args.start_host[0]
+);
+results = graph.cypher.execute(str_query)
+start_host = get_node_full(results[0][0])
+dfs(start_host._id, None) #start DFS
+print "writing config..."
+for node in nodes:
+     save_config('host_{0}.conf'.format(nodes_by_id[node]['icinga_name']), make_node_config(node))
+print "finished successfully"
