@@ -35,20 +35,20 @@
               <a href="/" title="View">Graph</a>
             </li>
             <li>
-              <a href="/Summary" title="Summary">Summary</a>
+              <a href="#" title="Summary">Summary</a>
             </li>
             <li>
               <a href="{{config.information.icingaUrl}}">Icinga2 classic</a>
             </li>
             <li>
-              <a href="/About" title="About">About</a>
+              <a href="#" title="About">About</a>
             </li>
           </ul>
         </div>
-        <div class="navbar-right">
+        <!--<div class="navbar-right">
           <p class="navbar-text">Logged as Guest</p>
           <button type="button" class="btn btn-default navbar-btn">Sign in</button>
-        </div>
+        </div>-->
       </nav>
 
     </div>

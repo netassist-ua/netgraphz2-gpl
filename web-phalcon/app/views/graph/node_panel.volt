@@ -16,6 +16,9 @@
           <label>IP: </label> <span id="node_ip"></span> <br />
           <label>MAC: </label> <span id="node_mac"></span>  <br />
           <label>Address: </label> <span id="node_address"></span> <br />
+          <label>Links: </label>
+          <div id="node_links">
+          </div>
     </div>
   </div>
 </div>

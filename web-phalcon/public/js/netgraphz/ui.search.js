@@ -54,6 +54,7 @@ netgraphz.ui.search = (function(ui, store, eventBus, tools, jQuery){
       var domEvent = e.domEvent;
       if( domEvent.keyCode == 191 ){
         default_instance.focus();
+        domEvent.preventDefault();
       }
     });
   };

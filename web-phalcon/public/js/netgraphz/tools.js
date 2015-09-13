@@ -10,8 +10,8 @@ netgraphz.tools = (function(){
     }
     for (var key in a) {
       if (b.hasOwnProperty(key)){
-        if(deep_extend && typeof b[key] === "object") {
-          c[key] = module.extend(a[key], b[key]);
+        if(deep_extend && typeof b[key] === "object" && !Array.isArray(b[key])) {
+          c[key] = module.extend(a[key], b[key], true);
         }
         else {
           c[key] = b[key];

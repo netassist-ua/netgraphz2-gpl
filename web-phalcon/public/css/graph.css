@@ -1,11 +1,22 @@
 #node_panel {
     z-index: 20;
-    height: 320px;
+    height: auto;
     padding-bottom: 10px;
-    width: 250px;
+    width: 265px;
     position: fixed;
     right: 20px;
     bottom: 10px;
+}
+
+#node_links {
+    display: inline;
+    margin-left: 8px;
+}
+
+#node_links >
+span.link_separator {
+    font-weight:bold;
+    color: grey;
 }
 
 #mynet {

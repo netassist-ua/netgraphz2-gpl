@@ -8,11 +8,8 @@ Also show channel load on edges, link capacities and graph bridges.
 Installation
 -------------
 
-1)	Install following dependencies
-2)	RUN install.sh	from scripts folder
-3)	install.sh will ask you about installation folder, provide you configuration sections for Apache2 and nginx
-4)	Open web-browser and follow http://[hostname]/negraphz2 in case of default options installation
-5)	Login as administrative user netgraphzadmin with password you've specified in installer script before  
+Installation instructions provided in user manual (docs directory of repository)
+For now only one way to add nodes - adding via Neo4j RESTful API.
 
 ### Icinga2
 

@@ -17,6 +17,7 @@ netgraphz.ui.panel = (function(ui, eventBus, tools, utils, jQuery){
       fadeTime: 400,
       holdTime: 2400,
       node_panel_close_button_id: "node_panel_close",
+      links: []
     };
 
     var cfg = tools.extend(defaults, user_settings);
@@ -28,6 +29,22 @@ netgraphz.ui.panel = (function(ui, eventBus, tools, utils, jQuery){
 
     jQuery(function(){
       $panel = jQuery('#' + cfg.node_panel_id);
+      var $links_container = $panel.find("#node_links");
+
+      $links_container.on("click", "a", {}, function(e){
+          if($(this).data("popup")){
+              var w = window.open($(this).attr("href"), $(this).data("popup-name"),
+                      "width="+$(this).data("popup-width")+",height="+$(this).data("popup-height"));
+              if(typeof w !== undefined){
+                  w.focus();
+              }
+              else {
+                 console.log("popup seems to be blocked...");
+              }
+              e.preventDefault();
+              return false;
+          }
+      });
       $panel.on('mouseover', function(){
         self.stopNodePanelTimer();
       });
@@ -45,6 +62,35 @@ netgraphz.ui.panel = (function(ui, eventBus, tools, utils, jQuery){
     var fadeTimer;
     var timer_started = false;
 
+    var make_separator = function(){
+        return "<span class='link_separator'> | </span>";
+    };
+
+    var make_link = function( link, node ){
+        var tag = "<a href='" + utils.format_node_str(link.url, node)+"' title='"+link.title+"' ";
+        if(link.type == "popup"){
+          tag += "data-popup='true' ";
+          if(typeof link.popupSize === "object"){
+              tag += "data-popup-width='"+link.popupSize.width+"' ";
+              tag += "data-popup-height='"+link.popupSize.height+"' ";
+          }
+          if(typeof link.popupName === "string"){
+              tag += "data-popup-name='"+ utils.format_node_str(link.popupName, node) +"' " ;
+          }
+          else {
+              tag += "data-popup-name='" + link.title + "' " ;
+          }
+        }
+        else {
+            tag += "data-popup='false' ";
+            if(link.newTab)
+              tag += "target='_blank' ";
+        }
+        tag += ">";
+        tag += link.title;
+        tag += "</a>";
+        return tag;
+    };
 
     this.stopNodePanelTimer = function(){
       if(timer_started){
@@ -79,6 +125,20 @@ netgraphz.ui.panel = (function(ui, eventBus, tools, utils, jQuery){
       else {
         $panel.find("#node_dups").text(node.duplicates ? "YES!" : "No");
       }
+      var $links_container = $panel.find("#node_links");
+      $links_container.empty();
+      if(typeof cfg.links === "undefined"
+          || !Array.isArray(cfg.links)){
+          return;
+      }
+      var l_length = cfg.links.length;
+      for( var i = 0; i < l_length; i ++ ){
+          var link = cfg.links [ i ];
+          $links_container.append(make_link(link, node));
+          if( i + 1 < l_length ){
+              $links_container.append(make_separator());
+          }
+      }
     };
 
     this.showNodePanel = function(node){
@@ -104,6 +164,7 @@ netgraphz.ui.panel = (function(ui, eventBus, tools, utils, jQuery){
     };
     return this;
   };
+
 
   var attach_events = function(){
     eventBus.subscribe("ui", "node_mouseover", function(topic, e){

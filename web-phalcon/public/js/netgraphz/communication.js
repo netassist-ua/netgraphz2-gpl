@@ -110,6 +110,8 @@ netgraphz.communication = (function(core, tools, eventBus, store, fetcher, ui, n
 				break;
 				case core.node_state.STATE_NODE_DOWN:
 				notifications.sendError(
+					 message.icinga.state_id == message.icinga.last_state_id ?
+					"Graph node still down" :
 					"Graph node goes DOWN!",
 					"Node: " + message.node.name
 				);

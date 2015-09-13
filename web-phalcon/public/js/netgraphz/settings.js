@@ -54,7 +54,25 @@ netgraphz.settings = (function(){
         'node_panel_id': 'node_panel', //id of node panel
         'node_panel_close_button_id': 'node_panel_close', //close button element Id
         'fadeTime': 400, //time to fade out node panel, ms
-        'holdTime': 2400 //time to hold panel on screen, ms
+        'holdTime': 2400, //time to hold panel on screen, ms
+        'links': [
+            {
+                'title': 'Icinga',
+                'url': '/cgi-bin/icinga2-classicui/extinfo.cgi?type=1&host={icinga_name}',
+                'type': 'link', //link or popup
+                'newTab': true //open in new tab
+            },
+            {
+                'title': 'ping',
+                'url': '/cgi-bin/ping?address={ip}',
+                'type': 'popup', //link or popup
+                'popupSize': { //size of popup
+                    'width': 300,
+                    'height': 400,
+                },
+                'popupName': "fping {ip}"
+            }
+        ]
       },
       'tabStop': {
         'enabled': true
