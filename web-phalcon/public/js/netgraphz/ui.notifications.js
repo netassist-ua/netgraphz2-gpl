@@ -81,7 +81,7 @@ netgraphz.ui.notifications = (function(ui, tools, toastr, notify){
         break;
         case notify.PERMISSION_GRANTED:
         use_desktop = true;
-        notify.config({pageVisibility: false, autoClose: 5000});
+        notify.config({pageVisibility: false, autoClose: settings.showTime});
         break;
         default:
         use_desktop = false;
