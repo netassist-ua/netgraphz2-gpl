@@ -21,21 +21,21 @@ netgraphz.store = (function(core, eventBus){
     this.getWarningNodes = function(){
       var nodes = [ ];
       Object.keys(_nodesById).forEach(function(k, i, a){
-            var e = _nodesById[ k ];
-            if(e.state == core.node_state.STATE_NODE_WARN)
-              nodes.push(e);
+        var e = _nodesById[ k ];
+        if(e.state == core.node_state.STATE_NODE_WARN)
+        nodes.push(e);
       });
       return nodes;
     };
 
     this.getDownNodes = function(){
-        var nodes = [ ];
-        Object.keys(_nodesById).forEach(function(k, i, a){
-              var e = _nodesById[ k ];
-              if(e.state == core.node_state.STATE_NODE_DOWN)
-                nodes.push(e);
-        });
-        return nodes;
+      var nodes = [ ];
+      Object.keys(_nodesById).forEach(function(k, i, a){
+        var e = _nodesById[ k ];
+        if(e.state == core.node_state.STATE_NODE_DOWN)
+        nodes.push(e);
+      });
+      return nodes;
     };
 
 
@@ -64,21 +64,41 @@ netgraphz.store = (function(core, eventBus){
         return;
       }
       var exists = node.id in _nodesById;
+
+      if(exists){
+        _publisher.emitSync("before_update_node", {
+          node: node,
+          date: new Date()
+        });
+      }
+      else {
+        _publisher.emitSync("before_add_node", {
+          node: node,
+          date: new Date()
+        });
+      }
       _nodesById[ node.id ] = node;
-      if(exists)
-      _publisher.emit("update_node", {
-        node: node,
-        date: new Date()
-      });
-      else
-      _publisher.emit("add_node", {
-        node: node,
-        date: new Date()
-      });
+
+      if(exists){
+        _publisher.emit("update_node", {
+          node: node,
+          date: new Date()
+        });
+      }
+      else{
+        _publisher.emit("add_node", {
+          node: node,
+          date: new Date()
+        });
+      }
     };
 
 
     this.updateNodes = function( nodes ){
+      _publisher.emitSync("before_update_nodes", {
+        nodes: nodes,
+        date: new Date()
+      });
       nodes.forEach(function(e, i, a){
         if(typeof e.id === "undefined"){
           console.error("updateNodes called for node with undefined id");
@@ -90,19 +110,18 @@ netgraphz.store = (function(core, eventBus){
       _publisher.emit("update_nodes", {
         nodes: nodes,
         date: new Date()
-        });
+      });
     };
-
   };
 
   var default_storage = null;
 
   exports.init = function(){
-      default_storage = new Store("default");
+    default_storage = new Store("default");
   };
 
   exports.getDefaultStorage = function(){
-      return default_storage;
+    return default_storage;
   };
 
   return exports;

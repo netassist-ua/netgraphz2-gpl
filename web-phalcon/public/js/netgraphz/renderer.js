@@ -8,7 +8,7 @@ netgraphz.renderer = (function(store, eventBus, tools){
 	var Renderer = function (name, cfg) {
 		//Default configuration
 
-
+		var _this = this;
 		var _double_tap_timer;
 		var _double_tap_target;
 
@@ -146,18 +146,23 @@ netgraphz.renderer = (function(store, eventBus, tools){
 			if(n.hasOwnProperty('state'))
 			classes = state_classes[n.state];
 			cy_node.addClass(classes);
-		}
+		};
 
 
 		this.update_batch_nodes = function(nodes){
 			cy.startBatch();
 			nodes.forEach(function(e, i, a){
-				_update_node_status(e);
+				_this.update_node(e)
 			});
 			cy.endBatch();
 		};
 
 		this.update_node = function(node){
+			var prevNode = store.getDefaultStorage().getNodeById(node.id);
+			var requires_update = (!prevNode) || node.state !== prevNode.state;
+			if( !requires_update ){
+				return;
+			}
 			_update_node_status(node);
 		};
 
@@ -336,11 +341,11 @@ netgraphz.renderer = (function(store, eventBus, tools){
 		};
 
 		var attach_events = function(){
-			eventBus.subscribe("store:default", "update_node", function(topic, e){
+			eventBus.subscribe("store:default", "before_update_node", function(topic, e){
 					var node = e.node;
 					getDefaultRenderer().update_node(node);
 			});
-			eventBus.subscribe("store:default", "update_nodes", function(topic, e){
+			eventBus.subscribe("store:default", "before_update_nodes", function(topic, e){
 					var nodes = e.nodes;
 					getDefaultRenderer().update_batch_nodes(nodes);
 			});
