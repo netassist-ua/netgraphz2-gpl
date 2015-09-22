@@ -7,6 +7,7 @@ import json
 import py2neo as neo
 
 
+s_dir = os.path.dirname(os.path.abspath(__file__))
 scanned_nodes_id = []
 nodes = []
 connections = {}
@@ -66,13 +67,14 @@ def make_connections_config(node_id):
     return cfg
 
 def make_node_config(node_id):
+    is_root = nodes_by_id[node_id] == start_host
     dict_host_replace = {
         "{hostname}": nodes_by_id[node_id]["icinga_name"],
         "{ip_address}": nodes_by_id[node_id]["ip_address"],
         "{start_hostname}": start_host["icinga_name"],
         "{deps}": make_connections_config(node_id)
     }
-    return replace_all(h_tpl, dict_host_replace)
+    return replace_all(h_tpl if not is_root else r_tpl , dict_host_replace)
 
 
 def dfs(node_id, usable_parent_id):
@@ -93,21 +95,9 @@ def dfs(node_id, usable_parent_id):
         if not rel.end_node._id in scanned_nodes_id:
             print "DFS to: {0}".format(rel.end_node["name"])
             dfs(rel.end_node._id, usable_parent_id);
-        #else:
-        #    cond = not (prev_usable_parent_id == rel.end_node._id)
-        #    if cond:
-        #        print rel.end_node["name"]
-        #        print nodes_by_id[usable_parent_id]["name"]
-        #        print "Found another path to {0}".format(rel.end_node["name"])
-        #        add_connection(usable_parent_id, rel.end_node._id)
     print "DFS end: {0}".format(node["name"])
     pass
 
-
-#    if make_cfg:
-#        dict_host_replace["{children}"] = dep_config
-#        node_config = replace_all(h_tpl, dict_host_replace)
-#        save_config('host_{0}.cfg'.format(node['icinga_name']), node_config);
 
 def open_and_read( file ):
     with open(file, 'r') as fd:
@@ -125,8 +115,9 @@ parser.add_argument("start_host",
     help="Starting host for DFS graph scanning", nargs=1, metavar="start_host")
 args = parser.parse_args()
 
-h_tpl = open_and_read('host_template.cfg')
-d_tpl = open_and_read('dependency_template.tpl')
+h_tpl = open_and_read(os.path.join(s_dir, 'host_template.cfg'))
+d_tpl = open_and_read(os.path.join(s_dir, 'dependency_template.tpl'))
+r_tpl = open_and_read(os.path.join(s_dir, 'root_template.cfg'))
 
 with open(args.config[0], 'r') as fd:
     config = json.load(fd);
@@ -141,6 +132,9 @@ str_query = 'MATCH (n:{0}) WHERE n.name=\'{1}\' RETURN Id(n)'.format(
     config["neo4j"]["nodesName"], args.start_host[0]
 );
 results = graph.cypher.execute(str_query)
+if len(results) == 0 or len(results[0]) == 0: 
+    print "Cannot find root node, halting..."
+    exit(3) 
 start_host = get_node_full(results[0][0])
 dfs(start_host._id, None) #start DFS
 print "writing config..."
