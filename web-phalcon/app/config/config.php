@@ -6,16 +6,14 @@ return new \Phalcon\Config(array(
     'information' => array(
         'companyName'   => 'My company',
         'siteName'      => 'NetGraphz2',
-        'icingaUrl'     => '/icinga2-classicui'
+        'icingaUrl'     => '/icinga2-classicui',
+        'openSignUp' => true
      ),
-    'database' => array(
-        'adapter'     => 'Mysql',
-        'host'        => 'localhost',
-        'username'    => 'root',
-        'password'    => '',
-        'dbname'      => 'test',
-        'charset'     => 'utf8',
-    ),
+     'mongo' => array(
+       'connectionString' => 'mongodb://localhost:27017',
+       'database' => 'netgraphz2',
+       'options' => array()
+     ),
     'graph' => array(
         'host'     =>  'localhost',
         'port'     =>   7474,
@@ -43,5 +41,7 @@ return new \Phalcon\Config(array(
         'cacheDir'       => APP_PATH . '/app/cache/',
         'graphDir'       => APP_PATH . '/app/graph/',
         'baseUri'        => '/',
+        'cryptSalt'      => 'eEAfR|_&G&f,+vU]:jFr!!A&+71w1Ms9~8_4L!<@[N@DyaIP_2My|:+.u>/6m,$D' //should be changed!
+        
     )
 ));

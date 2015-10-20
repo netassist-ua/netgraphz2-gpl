@@ -20,6 +20,12 @@ class NodesController extends ControllerBase {
     parent::initialize();
   }
 
+  /**
+  *  HTTP GET handler for /nodes/
+  *  Get node by identifier
+  *  @param int $id Identifier of graph node
+  */
+  
   public function getAction($id){
     $id = intval($id);
     $this->view->setRenderLevel(View::LEVEL_NO_RENDER);

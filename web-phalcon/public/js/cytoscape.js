@@ -3869,10 +3869,10 @@ this.cytoscape = cytoscape;
         if( propertiesEmpty ){
           return this; // nothing to animate
         }
-        
+
         if( isEles ){
           properties.style = style.getPropsList( properties.style || properties.css );
-          
+
           properties.css = undefined;
         }
 
@@ -10682,7 +10682,7 @@ this.cytoscape = cytoscape;
 
 })( cytoscape );
 
-;(function($$) { 
+;(function($$) {
   'use strict';
 
   // Additional graph analysis algorithms
@@ -19230,7 +19230,7 @@ this.cytoscape = cytoscape;
         // we have new things to draw but we're busy, so try again when possibly free
         this.redrawTimeout = setTimeout(function(){
           r.redraw();
-        }, redrawLimit);
+        }, 0); //redrawLimit/120.0);
         return;
       }
 

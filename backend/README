@@ -1,0 +1,7 @@
+NetGraphz2 backend
+Language: Go
+
+Network monitoring instance: 
+	NG_PING
+	NG_METRICS
+

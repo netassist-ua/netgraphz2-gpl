@@ -6,6 +6,10 @@ header.navbar {
 	padding-top: 20px;
 }
 
+.ng-reg-checkbox {
+	display: inline;
+}
+
 .container {
 	width: auto;
 	padding: 0 40px 0 40px;

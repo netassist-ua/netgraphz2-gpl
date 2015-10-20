@@ -42,7 +42,7 @@ netgraphz.settings = (function(){
         'adjustSizes': true,
         'spreadAfterStop': true,
         'edgeWeightInfluence': 0,
-        'scalingRatio': 4.5,
+        'scalingRatio': 2.8,
         'strongGravityMode': false,
         'gravity': 1,
         'slowDown': 0.1,

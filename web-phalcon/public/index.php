@@ -1,5 +1,4 @@
 <?php
-#xhprof_enable(XHPROF_FLAGS_MEMORY);
 gc_enable();
 error_reporting(E_ERROR | E_PARSE);
 

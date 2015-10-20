@@ -2,6 +2,7 @@
 use Phalcon\Mvc\Router;
 use NetAssist\Routes\GraphRoutes;
 use NetAssist\Routes\NodesRoutes;
+use NetAssist\Routes\SignupRoutes;
 
 $router = new Router(false);
 
@@ -22,6 +23,7 @@ $router->add("/", [
 
 $router->mount(new GraphRoutes());
 $router->mount(new NodesRoutes());
+$router->mount(new SignupRoutes());
 
 $router->notFound(
     array(

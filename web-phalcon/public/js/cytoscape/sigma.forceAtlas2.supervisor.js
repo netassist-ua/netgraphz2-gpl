@@ -5,32 +5,32 @@ window.forceAtlas2 = window.forceAtlas2 || {}
 
 
   /**
-   * Sigma ForceAtlas2.5 Supervisor
-   * =============================
-   *
-   * Author: Guillaume Plique (Yomguithereal)
-   * Version: 0.1
-   */
+  * Sigma ForceAtlas2.5 Supervisor
+  * =============================
+  *
+  * Author: Guillaume Plique (Yomguithereal)
+  * Version: 0.1
+  */
   var _root = window;
 
   /**
-   * Feature detection
-   * ------------------
-   */
+  * Feature detection
+  * ------------------
+  */
   var webWorkers = 'Worker' in _root;
 
   /**
-   * Supervisor Object
-   * ------------------
-   */
+  * Supervisor Object
+  * ------------------
+  */
   function Supervisor(cy, options, bb) {
     var _this = this,
-        workerFn = window.forceAtlas2.getForceAtlas2Worker();
+    workerFn = window.forceAtlas2.getForceAtlas2Worker();
 
-	var SPREAD_IDLE = 0;
-	var SPREAD_START = 1;
-	var SPREAD_SENT = 2;
-	var SPREAD_FINISH = 3;
+    var SPREAD_IDLE = 0;
+    var SPREAD_START = 1;
+    var SPREAD_SENT = 2;
+    var SPREAD_FINISH = 3;
 
     options = options || {};
 
@@ -43,13 +43,13 @@ window.forceAtlas2 = window.forceAtlas2 || {}
     this.bb = bb;
     this.config = {};
     this.shouldUseWorker =
-      options.worker === false ? false : true && webWorkers;
+    options.worker === false ? false : true && webWorkers;
     this.workerUrl = options.workerUrl;
 
     // State
     this.started = false;
     this.running = false;
-	this.spread_state = SPREAD_IDLE;
+    this.spread_state = SPREAD_IDLE;
 
     // Web worker or classic DOM events?
     if (this.shouldUseWorker) {
@@ -63,7 +63,7 @@ window.forceAtlas2 = window.forceAtlas2 || {}
 
       // Post Message Polyfill
       this.worker.postMessage =
-        this.worker.webkitPostMessage || this.worker.postMessage;
+      this.worker.webkitPostMessage || this.worker.postMessage;
     }
     else {
 
@@ -90,25 +90,26 @@ window.forceAtlas2 = window.forceAtlas2 || {}
         // Rendering graph
         //_this.sigInst.refresh();
       }
-	  else {
-		switch(_this.spread_state){
-		case SPREAD_IDLE:
-			break;
-		case SPREAD_START:
-			_this.sendByteArrayToWorker('spread');
-			_this.spread_state = SPREAD_SENT;
-			break;
-		case SPREAD_SENT:
-			console.log("new received");
-			_this.applyLayoutChanges();
-			_this.spread_state = SPREAD_FINISH;
-			break;
-		 }
-		}
+      else {
+        switch(_this.spread_state){
+          case SPREAD_IDLE:
+          break;
+          case SPREAD_START:
+          _this.sendByteArrayToWorker('spread');
+          _this.spread_state = SPREAD_SENT;
+          break;
+          case SPREAD_SENT:
+          console.log("new received");
+          _this.applyLayoutChanges();
+          _this.spread_state = SPREAD_FINISH;
+          break;
+        }
+      }
     });
 
     // Filling byteArrays
     this.graphToByteArrays();
+
   }
 
   Supervisor.prototype.makeBlob = function(workerFn) {
@@ -119,8 +120,8 @@ window.forceAtlas2 = window.forceAtlas2 || {}
     }
     catch (e) {
       _root.BlobBuilder = _root.BlobBuilder ||
-                           _root.WebKitBlobBuilder ||
-                           _root.MozBlobBuilder;
+      _root.WebKitBlobBuilder ||
+      _root.MozBlobBuilder;
 
       blob = new BlobBuilder();
       blob.append(workerFn);
@@ -129,16 +130,29 @@ window.forceAtlas2 = window.forceAtlas2 || {}
 
     return blob;
   };
+  Supervisor.prototype.makeAdjecencyList = function () {
+    this.adjList = { };
+    var nodes = this.cy.nodes();
+    for( var i = 0; i < nodes.length; i ++ ) {
+        var node = nodes [ i ];
+        this.adjList[ node.id() ] = [ ];
+        var edges = node.connectedEdges();
+        for( var j = 0; j < edges.length; j ++ ){
+            
+        }
+    }
+  };
+
 
   Supervisor.prototype.graphToByteArrays = function() {
     var nodes = this.cy.nodes(),
-        edges = this.cy.edges(),
-        nbytes = nodes.length * this.ppn,
-        ebytes = edges.length * this.ppe,
-        nIndex = {},
-        i,
-        j,
-        l;
+    edges = this.cy.edges(),
+    nbytes = nodes.length * this.ppn,
+    ebytes = edges.length * this.ppe,
+    nIndex = {},
+    i,
+    j,
+    l;
 
     // Allocating Byte arrays with correct nb of bytes
     this.nodesByteArray = new Float32Array(nbytes);
@@ -176,20 +190,20 @@ window.forceAtlas2 = window.forceAtlas2 || {}
   // TODO: make a better send function
   Supervisor.prototype.applyLayoutChanges = function() {
     var nodes = this.cy.nodes(),
-        j = 0,
-        realIndex;
+    j = 0,
+    realIndex;
 
-        var x = { min: Infinity, max: -Infinity };
-        var y = { min: Infinity, max: -Infinity };
+    var x = { min: Infinity, max: -Infinity };
+    var y = { min: Infinity, max: -Infinity };
 
-        for( var i = 0, l=this.nodesByteArray.length; i < l; i+= this.ppn ){
+    for( var i = 0, l=this.nodesByteArray.length; i < l; i+= this.ppn ){
 
-            x.min = Math.min( x.min, this.nodesByteArray[i] || 0 );
-            x.max = Math.max( x.max, this.nodesByteArray[i] || 0 );
+      x.min = Math.min( x.min, this.nodesByteArray[i] || 0 );
+      x.max = Math.max( x.max, this.nodesByteArray[i] || 0 );
 
-            y.min = Math.min( y.min, this.nodesByteArray[i + 1] || 0 );
-            y.max = Math.max( y.max, this.nodesByteArray[i + 1] || 0 );
-        }
+      y.min = Math.min( y.min, this.nodesByteArray[i + 1] || 0 );
+      y.max = Math.max( y.max, this.nodesByteArray[i + 1] || 0 );
+    }
 
     // Moving nodes
     for (var i = 0, l = this.nodesByteArray.length; i < l; i += this.ppn) {
@@ -205,8 +219,16 @@ window.forceAtlas2 = window.forceAtlas2 || {}
     nodes.updateCompoundBounds(); // because the way this layout sets positions is buggy for some reason; ref #878
 
     if( this.config.fit ){
-        this.cy.fit( config.padding );
+      this.cy.fit( config.padding );
     }
+  };
+
+  Supervisor.prototype.sendAdjecencyList = function(action){
+    var content = {
+      action: action || 'loop',
+      adj: true,
+      adjList: this.adjList
+    };
   };
 
   Supervisor.prototype.sendByteArrayToWorker = function(action) {
@@ -224,20 +246,19 @@ window.forceAtlas2 = window.forceAtlas2 || {}
     }
 
     if (this.shouldUseWorker)
-      this.worker.postMessage(content, buffers);
+    this.worker.postMessage(content, buffers);
     else
-      _root.postMessage(content, '*');
+    _root.postMessage(content, '*');
   };
 
   Supervisor.prototype.start = function() {
     if (this.running)
-      return;
+    return;
 
     this.running = true;
-	this.spread_state = 0;
-
+    this.spread_state = 0;
+    this.graphToByteArrays();
     if (!this.started) {
-
       // Sending init message to worker
       this.sendByteArrayToWorker('start');
       this.started = true;
@@ -249,11 +270,11 @@ window.forceAtlas2 = window.forceAtlas2 || {}
 
   Supervisor.prototype.stop = function() {
     if (!this.running)
-      return;
+    return;
     this.running = false;
-	if(this.config.spreadAfterStop){
-		this.spread_state = 1;
-	}
+    if(this.config.spreadAfterStop){
+      this.spread_state = 1;
+    }
   };
 
   // TODO: kill polyfill when worker is not true worker
@@ -267,14 +288,14 @@ window.forceAtlas2 = window.forceAtlas2 || {}
     this.config = config;
 
     if (!this.started)
-      return;
+    return;
 
     var data = {action: 'config', config: this.config};
 
     if (this.shouldUseWorker)
-      this.worker.postMessage(data);
+    this.worker.postMessage(data);
     else
-      _root.postMessage(data, '*');
+    _root.postMessage(data, '*');
   };
 
   this.Supervisor = Supervisor;

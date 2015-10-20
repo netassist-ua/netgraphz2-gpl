@@ -22,6 +22,17 @@ class ControllerBase extends Controller
         $this->tag->setTitle(sprintf("[%s] NetGraphz2", $config->information->companyName));
   }
 
+  protected function _registerSession($user)
+  {
+    $this->session->set(
+         'auth',
+         array(
+             'id'   => $user->_id,
+             'name' => $user->login
+         )
+     );
+  }
+
   protected function sendJsonResponse($json, $code = 200){
       $this->response->setStatusCode($code);
       $this->response->setJsonContent($json);

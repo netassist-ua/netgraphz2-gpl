@@ -69,8 +69,11 @@ netgraphz.renderer = (function(store, eventBus, tools){
 				}, cfg.doubleTapTime);
 				return false;
 			});
-
+			cy.edges().on('select', function(e){
+					console.log(e.cyTarget.id());
+			});
 			cy.nodes().on('select', function(e){
+				console.debug(e.cyTarget.id());
 				if(typeof _cy_selected !== "undefined"){
 					_cy_selected.unselect(); //bug override
 				}
@@ -241,7 +244,8 @@ netgraphz.renderer = (function(store, eventBus, tools){
 							'content': 'data(name)',
 							'width': '8px',
 							'height': '8px',
-							'font-size': '6px'
+							'font-size': '5px',
+							'min-zoomed-font-size': '4px'
 						}
 					},
 					{

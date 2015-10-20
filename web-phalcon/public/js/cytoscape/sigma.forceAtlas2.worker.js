@@ -1,4 +1,4 @@
-;(function(undefined) {
+(function(undefined) {
   'use strict';
 
   /**
@@ -83,7 +83,8 @@
     var edgeProperties = {
       source: 0,
       target: 1,
-      weight: 2
+      weight: 2,
+      id: 3
     };
 
     function np(i, p) {
@@ -94,8 +95,6 @@
       if (i !== parseInt(i))
       throw '_np: non int.';
 
-
-			
       if (p in nodeProperties)
       return i + nodeProperties[p];
       else
@@ -110,6 +109,8 @@
       throw 'ep: non correct (' + i + ').';
       if (i !== parseInt(i))
       throw 'ep: non int.';
+
+      console.debug("%j", edgeProperties);
 
       if (p in edgeProperties)
       return i + edgeProperties[p];
@@ -149,44 +150,59 @@
       W.settings = extend(o, W.settings);
     }
 
-	function spread(){
-		_do_spread();
-   		sendNewCoords(); 
-	}
+    function spread(){
+      _do_spread();
+      sendNewCoords();
+    }
 
-	function _do_spread(){
-		for (var e = 0; e < W.edgesLength; e += W.ppe) {
-			var n1 = W.edgeMatrix[ep(e, 'source')];
-			var n2 = W.edgeMatrix[ep(e, 'target')];
-			var w = W.edgeMatrix[ep(e, 'weight')];
-			var xDist = W.nodeMatrix[np(n1, 'x')] - W.nodeMatrix[np(n2, 'x')];
-			var yDist = W.nodeMatrix[np(n1, 'y')] - W.nodeMatrix[np(n2, 'y')];
-		    var distance = Math.sqrt((xDist * xDist) + (yDist * yDist));
-			if( distance < 30 ){
-				var m1 = W.nodeMatrix[np(n1, 'mass')] - 1;
-				var m2 = W.nodeMatrix[np(n2, 'mass')] - 1;
-				var n_start;
-				var n_end;
-				if(m1 < m2 && m1 == 1){
-					n_start = n2;
-					n_end = n1;
-				}	
-				if(m1 > m2 && m2 == 1){ 
-					n_start = n1;
-					n_end = n2;	
-				}
-				if(typeof n_start === "undefined"){
-					break;
-				}
-				var v = {};
-				v['x'] = W.nodeMatrix[np(n_end, 'x')] - W.nodeMatrix[np(n_start, 'x')];
-				v['y'] = W.nodeMatrix[np(n_end, 'y')] - W.nodeMatrix[np(n_start, 'y')];
-				//W.nodeMatrix[np(n_end, 'x')] += (v['x']/distance) * (16);
-				//W.nodeMatrix[np(n_end, 'y')] += (v['y']/distance) * (16);
-				W.nodeMatrix[np(n_end, 'x')] += (v['x']/distance) * (distance * 0.6 + (Math.random() * 0.35));
-				W.nodeMatrix[np(n_end, 'y')] += (v['y']/distance) * (distance * 0.6 + (Math.random() * 0.35));
-		  }
-		}
+    function _do_spread(){
+      var n_spread = 0;
+      for (var e = 0; e < W.edgesLength; e += W.ppe) {
+        var n1 = W.edgeMatrix[ep(e, 'source')];
+        var n2 = W.edgeMatrix[ep(e, 'target')];
+        var w = W.edgeMatrix[ep(e, 'weight')];
+        var xDist = W.nodeMatrix[np(n1, 'x')] - W.nodeMatrix[np(n2, 'x')];
+        var yDist = W.nodeMatrix[np(n1, 'y')] - W.nodeMatrix[np(n2, 'y')];
+        var distance = Math.sqrt((xDist * xDist) + (yDist * yDist));
+        console.debug(distance);
+        if( distance <  30 ){
+          var m1 = W.nodeMatrix[np(n1, 'mass')] - 1;
+          var m2 = W.nodeMatrix[np(n2, 'mass')] - 1;
+          var b_m = m1;
+          var l_m = m2;
+          var n_start = -1;
+          var n_end = -1;
+          if(m1 < m2){
+            n_start = n2;
+            n_end = n1;
+            b_m = m2;
+            l_m = m1;
+          }
+          if(m1 > m2){
+            n_start = n1;
+            n_end = n2;
+            b_m = m1;
+            l_m = m2;
+          }
+          if(n_start == -1){
+            continue;
+          }
+          var v = {};
+          v['x'] = W.nodeMatrix[np(n_end, 'x')] - W.nodeMatrix[np(n_start, 'x')];
+          v['y'] = W.nodeMatrix[np(n_end, 'y')] - W.nodeMatrix[np(n_start, 'y')];
+          var nv = {};
+          nv['x'] = v['x'] / distance;
+          nv['y'] = v['y'] / distance;
+          W.nodeMatrix[np(n_end, 'x')] -= v['x'];
+          W.nodeMatrix[np(n_end, 'y')] -= v['y'];
+          var dist_factor = (0.65 + (Math.random() * (1/Math.sqrt(b_m)) *  2) ) * (35 + (b_m + l_m) * 0.75);
+          W.nodeMatrix[np(n_end, 'x')] += nv['x'] * dist_factor;
+          W.nodeMatrix[np(n_end, 'y')] += nv['y'] * dist_factor;
+          //Math.abs(W.nodeMatrix[n_end + 1] + nv['y'] * dist_factor) > 1000
+          n_spread++
+        }
+      }
+      console.debug("nSpread: %s", n_spread);
     }
 
     /**
@@ -196,7 +212,6 @@
     // MATH: get distances stuff and power 2 issues
     function pass() {
       var a, i, j, l, n, n1, n2, q, e, w, g;
-
       var rootRegion,
       outboundAttCompensation,
       coefficient,
@@ -609,10 +624,10 @@
           // First iteration
           run();
           break;
-		  case 'spread':
-          W.nodeMatrix = new Float32Array(e.data.nodes);		 
-		  spread();	
-		  break;
+          case 'spread':
+          W.nodeMatrix = new Float32Array(e.data.nodes);
+          spread();
+          break;
           case 'loop':
           W.nodeMatrix = new Float32Array(e.data.nodes);
           run();

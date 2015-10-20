@@ -50,13 +50,12 @@ class Client {
     }
     else {
       $this->_socket_client =
-      stream_socket_client(sprintf("tcp://%s:%d", $this->_config->host, $this->_config->port));
-      stream_set_timeout($this->_socket_client, 2);
+      stream_socket_client(sprintf("tcp://%s:%d", $this->_config->host, $this->_config->port), $errno, $errstr, 2);
     }
     if($this->_socket_client == false){
-      fclose($this->_socket_client);
       throw new \RuntimeException("Cannot connect to LiveStatus server using configuration provided");
     }
+    stream_set_timeout($this->_socket_client, 2);
     $this->_connected = true;
   }
 
