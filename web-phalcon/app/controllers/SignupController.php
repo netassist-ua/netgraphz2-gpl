@@ -13,7 +13,6 @@ class SignupController extends ControllerBase {
     if(!$config->information->openSignUp){
       return false;
     }
-
   }
 
   public function indexAction(){

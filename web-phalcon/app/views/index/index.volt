@@ -23,7 +23,8 @@
 {{ javascriptInclude("js/netgraphz/main.js") }}
 {% endblock %}
 
-{%block content%}
+
+{%block page_header%}
 <div class="page-header">
     <h3>{{config.information.companyName}} network graph</h3>
     <div class="netgraphz-statusstrip">
@@ -43,6 +44,10 @@
       </div>
     </div>
 </div>
+{% endblock %}
+
+{%block content%}
+
 <div id="waiter">
   <img src="/img/waiter.gif" alt="waiter"/>
 </div>

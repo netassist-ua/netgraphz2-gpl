@@ -3,10 +3,13 @@
 {{ stylesheet_link("css/graph.css") }}
 {% endblock %}
 
-{%block content%}
+{%block page_header %}
 <div class="page-header">
     <h3>{{config.information.companyName}} network graph</h3>
 </div>
+{% endblock %}
+
+{%block content%}
 <div class="container-fluid">
     <section class="container">
 		<div class="container-page">

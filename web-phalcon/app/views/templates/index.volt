@@ -54,6 +54,8 @@
     </div>
   </header>
   <div class="container">
+    {% block page_header %}{% endblock %}
+    {{ content() }}
     {% block content %} {% endblock %}
   </div>
   <footer>
