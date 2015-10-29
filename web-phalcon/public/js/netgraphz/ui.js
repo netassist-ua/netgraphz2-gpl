@@ -48,6 +48,59 @@ netgraphz.ui = (function(store, settings, renderer, eventBus, $){
 					});
 			});
 			$cbFollow = $("#"+settings.followProblemNodesCheckboxId);
+			$("#"+settings.positionSaveButtonId).click(function(e){
+					e.preventDefault();
+					var pos = renderer.getDefaultRenderer().dumpNodesPositions();
+					$.ajax({
+							url: "/Graph/positions",
+							contentType: "application/json",
+							type: "POST",
+							data: JSON.stringify(pos),
+							success: function( data, text, jqXHR ){
+								var code = jqXHR.status;
+								if(code >= 200 && code < 300){
+									console.log("[Positions] Response received, HTTP code: %s", code);
+								}
+								else {
+									console.error("[Positions] Received code: %d", code);
+								}
+								console.log("Positions save success");
+							},
+							error: function(jqXHR, text, errorThrown){
+								var code = jqXHR.statusCode();
+								console.error("[FETCHER] Error in AJAX: %s, code: %s", text, code);
+								console.error("Failed to save positions");
+								alert("Failed to save positions. Try again later!");
+							}
+					});
+					$(this).blur();
+			});
+			$("#"+settings.positionClearButtonId).click(function(e){
+					e.preventDefault();
+					$.ajax({
+						url: "/Graph/positions",
+						contentType: "application/json",
+						type: "DELETE",
+						data: {},
+						success: function( data, text, jqXHR ){
+							var code = jqXHR.status;
+							if(code >= 200 && code < 300){
+								console.log("[Positions] Response received, HTTP code: %s", code);
+							}
+							else {
+								console.error("[Positions] Received code: %d", code);
+							}
+							console.log("Positions delete success");
+						},
+						error: function(jqXHR, text, errorThrown){
+							var code = jqXHR.statusCode();
+							console.error("[FETCHER] Error in AJAX: %s, code: %s", text, code);
+							console.error("Failed to delete positions");
+							alert("Failed to delete positions. Try again later!");
+						}
+					});
+					$(this).blur();
+			});
 			$('#'+settings.viewPortResetButtonId).click(function(e){
 					e.preventDefault();
 					renderer.getDefaultRenderer().resetZoomAndCenter();

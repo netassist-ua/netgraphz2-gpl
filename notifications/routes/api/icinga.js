@@ -5,6 +5,9 @@ var configuration = require(__base + 'configuration');
 var dispatcher = require(__base + 'dispatcher');
 var database = require(__base + 'database');
 
+var _rate_limit_timer = null;
+var _rate_limit_req_limit = 1000;
+var _rate_limit_req_curr = 0;
 
 var express = require('express');
 var router = express.Router();

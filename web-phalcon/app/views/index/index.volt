@@ -36,6 +36,10 @@
         <button id="graph_resetzoom" type="button" class="btn btn-default">Reset zoom</button>
 		    <button id="graph_layoutstart" type="button" class="btn btn-default">Layout start</button>
 		    <button id="graph_layoutstop" type="button" class="btn btn-default">Layout stop</button>
+        {% if auth.getIdentity() != null %}
+        <button id="pos_save" type="button" class="btn btn-default">Save positions</button>
+        <button id="pos_clear" type="button" class="btn btn-default">Clear positions</button>
+        {% endif %}
         <label class="checkbox-inline"><input type="checkbox" id="graph_follownodes" value="">Follow problematic nodes</label>
       </div>
       <div class="toolstrip-right">

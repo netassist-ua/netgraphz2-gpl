@@ -17,9 +17,9 @@ use Phalcon\Flash\Direct as Flash;
 
 
 use Phalcon\Session\Adapter\Files as SessionAdapter;
-//use NetAssist\Shared\SessionAdapter as SessionAdapter;
 use NetAssist\Graph\ConnectionBuilder as GraphConnectionBuilder;
 use NetAssist\Icinga\LiveStatus\Config as LiveStatusConfig;
+use NetAssist\Shared\Auth as Auth;
 
 /**
 * The FactoryDefault Dependency Injector automatically register the right services providing a full stack framework
@@ -198,4 +198,12 @@ $di->set('crypt', function () use ($config) {
 $di->set('router', function () {
   require APP_PATH.'/app/config/routes.php';
   return $router;
+});
+
+/**
+* Authentication service
+*/
+
+$di->set('auth', function () {
+    return new Auth();
 });

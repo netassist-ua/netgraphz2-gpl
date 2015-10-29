@@ -45,10 +45,14 @@
             </li>
           </ul>
         </div>
-        <!--<div class="navbar-right">
-          <p class="navbar-text">Logged as Guest</p>
-          <button type="button" class="btn btn-default navbar-btn">Sign in</button>
-        </div>-->
+        <div class="navbar-right">
+          {% if auth.getIdentity() == null %}
+            {{ link_to("Account/Login", "Login", "class": "btn btn-default navbar-btn") }}
+          {% else %}
+            <p class="navbar-text">Logged as {{auth.getName()}}</p>
+            {{ link_to("Account/Logout", "Logout", "class": "btn btn-default navbar-btn") }}
+          {% endif %}
+        </div>
       </nav>
 
     </div>

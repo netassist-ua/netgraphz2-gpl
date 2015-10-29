@@ -2,19 +2,9 @@
 use Phalcon\Mvc\Router;
 use NetAssist\Routes\GraphRoutes;
 use NetAssist\Routes\NodesRoutes;
-use NetAssist\Routes\SignupRoutes;
+use NetAssist\Routes\AccountRoutes;
 
 $router = new Router(false);
-
-/*$router->add("/login", array(
-    'controller' => 'login',
-    'action'     => 'index'
-));
-
-$router->add("/products/:action", array(
-    'controller' => 'products',
-    'action'     => 1
-));*/
 
 $router->add("/", [
     'controller' => 'index',
@@ -23,7 +13,7 @@ $router->add("/", [
 
 $router->mount(new GraphRoutes());
 $router->mount(new NodesRoutes());
-$router->mount(new SignupRoutes());
+$router->mount(new AccountRoutes());
 
 $router->notFound(
     array(

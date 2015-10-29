@@ -41,7 +41,11 @@ return new \Phalcon\Config(array(
         'cacheDir'       => APP_PATH . '/app/cache/',
         'graphDir'       => APP_PATH . '/app/graph/',
         'baseUri'        => '/',
-        'cryptSalt'      => 'eEAfR|_&G&f,+vU]:jFr!!A&+71w1Ms9~8_4L!<@[N@DyaIP_2My|:+.u>/6m,$D' //should be changed!
-        
+        'cryptSalt'      => 'Thae4pijiexahfahYief3411', //should be changed!
+        'rememberLifeTime' => 604800,
+        'failLoginWindowTime' =>  300,
+        'failLoginBlockPermament' => false,
+        'failLoginBlockTime' => 600,
+        'failLoginWindowMaxCount' => 5
     )
 ));

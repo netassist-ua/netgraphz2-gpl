@@ -72,6 +72,16 @@
       public $status;
 
       /**
+      * @var int Predefined x coordinate
+      */
+      public $x;
+
+      /**
+      * @var int Predefined y coordinate
+      */
+      public $y;
+
+      /**
       * Performs JSON serialzation preparation
       * @return array Repsentation of object for JSON serializer
       */
@@ -92,7 +102,9 @@
                 'state'=> isset($this->status) ? $this->status->state : NodeState::STATE_UKNOWN,
                 'rtt' => isset($this->status) ? $this->status->avg_rtt_ms : null,
                 'packet_loss' => isset($this->status) ? $this->status->packet_loss : null,
-                'duplicates' => isset($this->status) ? $this->status->dup : null
+                'duplicates' => isset($this->status) ? $this->status->dup : null,
+                'x' => isset($this->x) ? $this->x : null,
+                'y' => isset($this->y) ? $this->y : null
           ];
       }
 

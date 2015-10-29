@@ -4,6 +4,7 @@ var netgraphz = netgraphz || {};
     fetchLevel = 0;
     var nodes = [];
     var links = [];
+    var user_params = [];
 
     var start_netgraphz = function(){
         ng.store.init();
@@ -24,11 +25,45 @@ var netgraphz = netgraphz || {};
         ng.ui.search.init(ng.settings.ui.search);
         console.log("Rendering graph...");
         ng.renderer.getDefaultRenderer().render_graph(nodes,links);
+        if(!params.positions){
+          console.log("No saved positions. Starting layout...");
+          ng.renderer.getDefaultRenderer().startLayout();
+          setTimeout(function(){
+              ng.renderer.getDefaultRenderer().stopLayout();
+          }, ng.settings.renderer.layout.maxSimulatingTime);
+        }
         console.log("Starting automatic update...");
         ng.updater.start();
-    }
+    };
+
+    var start_sequence = function(){
+      fetchLevel ++;
+      if(fetchLevel == 3){
+          console.log("Loading graph...");
+          start_netgraphz();
+      }
+      else {
+          console.log("Awaiting links...");
+      }
+    };
 
     console.log("Fetching data...");
+
+    ng.fetcher.fetchUserParameters(function(data, code, error){
+      if(load_cancel)
+        return;
+      if(error){
+        console.error("Failed to fetch user data, http code: %s", code);
+        console.error("Error: %s", JSON.stringify(error));
+        alert("Error while user data, refresh page. If problem persists, contact administrator.")
+        load_cancel = true;
+        return;
+      }
+      console.log("User parameters loading completed");
+      params = data;
+      start_sequence();
+    });
+
 
     ng.fetcher.fetchAllNodes(function(data, code, error){
         if(load_cancel)
@@ -41,15 +76,8 @@ var netgraphz = netgraphz || {};
           return;
         }
         console.log("Nodes loading completed");
-        fetchLevel ++;
         nodes = data;
-        if(fetchLevel == 2){
-            console.log("Loading graph...");
-            start_netgraphz();
-        }
-        else {
-            console.log("Awaiting links...");
-        }
+        start_sequence();
     });
 
     ng.fetcher.fetchAllLinks(function( data, code, error ){
@@ -63,15 +91,8 @@ var netgraphz = netgraphz || {};
         return;
       }
       console.log("Links loading completed");
-      fetchLevel ++;
       links = data;
-      if(fetchLevel == 2){
-          console.log("Loading graph...");
-          start_netgraphz();
-      }
-      else {
-          console.log("Awaiting nodes...");
-      }
+      start_sequence();
     });
 
 })(netgraphz);

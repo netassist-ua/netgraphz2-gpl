@@ -14,18 +14,6 @@ use Phalcon\Validation\Validator\Confirmation;
 
 
 class UserSignupForm extends Form {
-	public $email;
-
-	public $emailConfirm;
-
-	public $password;
-
-	public $passwordConfirm;
-
-	public $username;
-
-	public $captcha;
-
 	public function initialize()
 	{
 		//Username
@@ -100,6 +88,7 @@ class UserSignupForm extends Form {
 		$password->setAttributes(array(
 			'class' => 'form-control'
 		));
+		$password->clear();
 		$this->add($password);
 
 		// Confirm Password
@@ -113,6 +102,7 @@ class UserSignupForm extends Form {
 		$confirmPassword->setAttributes(array(
 			'class' => 'form-control'
 		));
+		$confirmPassword->clear();
 		$this->add($confirmPassword);
 
 		$csrf = new Hidden('csrf');

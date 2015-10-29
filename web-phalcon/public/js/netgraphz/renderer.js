@@ -151,6 +151,22 @@ netgraphz.renderer = (function(store, eventBus, tools){
 			cy_node.addClass(classes);
 		};
 
+		this.dumpNodesPositions = function(){
+				var nodes = cy.nodes();
+				var length = nodes.length;
+				var positions = [];
+				for( var i = 0; i < length; i++){
+						var node = nodes[ i ];
+						var n_id = node.id();
+						var pos = {
+							id: parseInt(n_id.substring(1, n_id.length)),
+							x: node.position().x,
+							y: node.position().y
+						}
+						positions.push(pos);
+				}
+				return positions;
+		};
 
 		this.update_batch_nodes = function(nodes){
 			cy.startBatch();
@@ -200,8 +216,8 @@ netgraphz.renderer = (function(store, eventBus, tools){
 					},
 					classes: classes,
 					position: {
-						x: R * Math.cos(2 * Math.PI / nodes.length * i),
-						y: R * Math.sin(2 * Math.PI / nodes.length * i)
+						x: typeof n.x == undefined || n.x == null ?  R * Math.cos(2 * Math.PI / nodes.length * i) : parseFloat(n.x),
+						y: typeof n.y == undefined || n.y == null ?  R * Math.sin(2 * Math.PI / nodes.length * i) : parseFloat(n.y)
 					}
 				});
 			});
@@ -229,6 +245,9 @@ netgraphz.renderer = (function(store, eventBus, tools){
 				userZoomingEnabled: true,
 				elements: g,
 				selectionType: 'single',
+				layout: {
+					name: 'preset'
+				},
 				style: [
 					{
 						selector: ':selected',
@@ -280,15 +299,11 @@ netgraphz.renderer = (function(store, eventBus, tools){
 						}
 					}]
 				});
+				cy.forceRender();
 				_layout = cy.makeLayout(cfg.layout);
-				_layout.run();
 				_layout.on('layoutstop', function(e){
 					layout_started = false;
 				});
-				setTimeout(function(){
-					_layout.stop();
-				}, cfg.layout.maxSimulatingTime);
-				layout_started = true;
 				attach_events();
 			};
 

@@ -18,12 +18,13 @@ class IndexController extends ControllerBase
     public function initialize() {
         $this->_nodesRepo = $this->di->get('graphNodesRepository');
         $this->_linksRepo = $this->di->get('graphLinksRepository');
+        parent::initialize();
      }
 
     public function indexAction()
     {
         $this->view->node_count = $this->_nodesRepo->CountAllNodes();
-        $this->view->link_count = ceil($this->_linksRepo->CountAllLinks() / 2);   
+        $this->view->link_count = ceil($this->_linksRepo->CountAllLinks() / 2);
     }
 
 }

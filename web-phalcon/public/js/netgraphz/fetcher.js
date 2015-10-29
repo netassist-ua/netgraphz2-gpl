@@ -27,6 +27,10 @@ netgraphz.fetcher = (function(ng){
 		});
 	};
 
+	module.fetchUserParameters = function(callback){
+			_fetch_json_get("/Graph/userParams", {}, callback);
+	};
+
   module.fetchAllNodes = function(callback){
 		_fetch_json_get("/Graph/fetchAllNodes", {}, callback);
 	};

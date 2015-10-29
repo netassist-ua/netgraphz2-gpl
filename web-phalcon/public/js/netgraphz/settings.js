@@ -111,7 +111,9 @@ netgraphz.settings = (function(){
       'layoutStartButtonId': 'graph_layoutstart',
       'layoutStopButtonId': 'graph_layoutstop',
       'viewPortResetButtonId': 'graph_resetzoom',
-      'followProblemNodesCheckboxId': 'graph_follownodes'
+      'followProblemNodesCheckboxId': 'graph_follownodes',
+      'positionSaveButtonId': 'pos_save',
+      'positionClearButtonId': 'pos_clear',
     }
   };
 })();
