@@ -57,7 +57,7 @@ netgraphz.ui.tabStop =  (function(ui, eventBus, tools, store, core, $){
       console.log("Tab stop queue is empty, exiting");
       return;
     }
-    if(_tab_stop < _tab_stop_queue.length - 1){
+    if(_tab_stop < _tab_stop_queue.length){
       var id = _tab_stop_queue[_tab_stop].id;
       ui.select_node(id);
       if(_tab_stop + 1 == _tab_stop_queue.length){
@@ -68,6 +68,7 @@ netgraphz.ui.tabStop =  (function(ui, eventBus, tools, store, core, $){
       }
     }
     else {
+      //fine, something disappeared from bad state
       _tab_stop = 0;
       _handle_tab_fwd_switch();
     }
@@ -78,7 +79,7 @@ netgraphz.ui.tabStop =  (function(ui, eventBus, tools, store, core, $){
       console.log("Tab stop queue is empty, exiting");
       return;
     }
-    if(_tab_stop > 0){
+    if(_tab_stop < _tab_stop_queue.length){
       var id = _tab_stop_queue[_tab_stop].id;
       ui.select_node(id);
       if(_tab_stop - 1 < 0){
@@ -89,6 +90,7 @@ netgraphz.ui.tabStop =  (function(ui, eventBus, tools, store, core, $){
       }
     }
     else {
+	//fine, something disappeared last time
       _tab_stop = _tab_stop_queue.length - 1;
       _handle_tab_bkwd_switch();
     }

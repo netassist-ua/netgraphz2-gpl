@@ -306,17 +306,65 @@ class ResponseFormatter implements ResponseFormatterInterface
                 $i = 0;
                 foreach ($dat['row'] as $row) {
                     $tmpColumns[$i][] = $row;
-                    $i++;
+                    ++$i;
                 }
             }
+            $y = 0;
             foreach ($columns as $k => $col) {
                 if (!empty($tmpColumns)) {
                     $rows[$col] = $tmpColumns[$k];
+                    if (is_array($tmpColumns[$k])) {
+                        foreach ($tmpColumns[$k] as $i => $el) {
+                            if (is_array($el) && isset($el[0])) {
+                                $el[0] = 'maybe relationship';
+                                if (isset($response['results'][0]['data'][$k])) {
+                                    $maybeRel = $response['results'][0]['data'][$k]['rest'][$y];
+                                    if (isset($maybeRel['start'])) {
+                                        $rows[$col][$i] = $this->getOnlyUsefulEdgeInfoFromRestFormat($maybeRel);
+                                    }
+                                    if (is_array($maybeRel)) {
+                                        $areRels = false;
+                                        foreach ($maybeRel as $rel) {
+                                            if (isset($rel['start'])) {
+                                                $areRels = true;
+                                            }
+                                        }
+                                        if ($areRels) {
+                                            $rows[$col][$i] = $this->getUsefulRestEdgeInfoFromCollection($maybeRel);
+                                        }
+                                    }
+                                }
+
+                            }
+                        }
+                    }
                 }
+                ++$y;
             }
         }
 
         return $rows;
+    }
+
+    private function getOnlyUsefulEdgeInfoFromRestFormat(array $rel)
+    {
+        $data = [
+            'id' => $rel['metadata']['id'],
+            'type' => $rel['metadata']['type'],
+            'properties' => $rel['data'],
+        ];
+
+        return $data;
+    }
+
+    private function getUsefulRestEdgeInfoFromCollection(array $rels)
+    {
+        $data = [];
+        foreach ($rels as $rel) {
+            $data[] = $this->getOnlyUsefulEdgeInfoFromRestFormat($rel);
+        }
+
+        return $data;
     }
 
     private function processTableFormat(array $rows = array())

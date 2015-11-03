@@ -18,14 +18,16 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  * @method getRoot($conn = null)
  * @method ping($conn = null)
  * @method getLabels($conn = null)
+ * @method \Neoxygen\NeoClient\Schema\UniqueConstraint createSchemaUniqueConstraint($label, $property, $conn = null)
  * @method getConstraints($conn = null)
  * @method listIndex($label, $conn = null)
  * @method listIndexes(array $labels = array(), $conn = null)
  * @method isIndexed($label, $propertyKey, $conn = null)
  * @method getVersion($conn = null)
  * @method openTransaction($conn = null)
+ * @method \Neoxygen\NeoClient\Transaction\Transaction createTransaction($conn = null)
  * @method rollbackTransaction($id, $conn = null)
- * @method sendCypherQuery($query, array $parameters = array(), $conn = null)
+ * @method \Neoxygen\NeoClient\Formatter\Response sendCypherQuery($query, array $parameters = array(), $conn = null)
  * @method sendMultiple(array $statements, $conn = null)
  * @method sendWriteQuery($query, array $parameters = array())
  * @method sendReadQuery($query, array $parameters = array())
@@ -35,7 +37,11 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  */
 class Client
 {
-    const NEOCLIENT_VERSION = "2.2.5";
+    const NEOCLIENT_VERSION = '3.2.0';
+
+    const NEOCLIENT_QUERY_MODE_WRITE = 'WRITE';
+
+    const NEOCLIENT_QUERY_MODE_READ = 'READ';
 
     private static $serviceContainer;
 
@@ -56,7 +62,7 @@ class Client
 
     public static function commitPreparedTransaction(PreparedTransaction $transaction)
     {
-        return self::call('sendMultiple', array($transaction->getStatements(), $transaction->getConnection()));
+        return self::call('sendMultiple', array($transaction->getStatements(), $transaction->getConnection(), $transaction->getQueryMode()));
     }
 
     /**

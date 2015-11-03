@@ -23,15 +23,16 @@ class Auth extends Component
     * @return array|null Modified user tokens array or null
     */
     private function cleanUserTokens($tokens){
-          if(!is_array($tokens))
+          if(!is_array($tokens)){
             return null;
+          }
           foreach ($tokens as $key => $token) {
-            if(!is_object($token) || !property_exists($token, "createDate") ){
+            $token = (object) $token;
+            if(!property_exists($token, "createDate")){
                     unset($tokens[$key]); //remove session without date
                     continue;
             }
-            $date = $token->createDate->toDateTime();
-            $diff = time() - $date->getTimestamp();
+            $diff = time() - $token->createDate->sec;
             if($diff > $this->config->application->rememberLifeTime){
                 unset($tokens[$key]); //clean-out old sessions
             }
@@ -292,6 +293,12 @@ class Auth extends Component
             $this->cookies->get('RMU')->delete();
         }
         if ($this->cookies->has('RMT')) {
+            $tokenVal = $this->cookies->get('RMT')->getValue();
+            $user = $this->getUser();
+            if($user != false && array_key_exists($tokenVal, $user->tokens)){
+                unset($user->tokens[$tokenVal]);
+            }
+            $user->save();
             $this->cookies->get('RMT')->delete();
         }
         $this->session->remove('auth-identity');

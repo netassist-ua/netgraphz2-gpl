@@ -55,9 +55,9 @@ class ClientBuilder
     private $loggers = array();
 
     /**
-     * @var null|true if the check for a Ha Failure file have to be skipped or not
+     * @var bool if the check for a Ha Failure file have to be skipped or not
      */
-    private $skipHaFailureFileCheck;
+    private $skipHaFailureFileCheck = false;
 
     /**
      */
@@ -94,9 +94,10 @@ class ClientBuilder
     }
 
     /**
-     * Load a configuration from an external YAML file
+     * Load a configuration from an external YAML file.
      *
      * @param string $file
+     *
      * @return ClientBuilder
      */
     public function loadConfigurationFile($file)
@@ -110,11 +111,25 @@ class ClientBuilder
     }
 
     /**
-     * @param string  $alias    An alias for the connection
-     * @param string  $scheme   The scheme of the connection
-     * @param string  $host     The host of the connection
-     * @param integer $port     The port for the connection
-     * @param bool    $authMode Whether or not the connection use the authentication extension
+     * Load a user defined configuration array
+     *
+     * @param array $configuration
+     *
+     * @return ClientBuilder
+     */
+    public function loadConfiguration(array $configuration)
+    {
+        $this->loadedConfig = $configuration;
+
+        return $this;
+    }
+
+    /**
+     * @param string $alias    An alias for the connection
+     * @param string $scheme   The scheme of the connection
+     * @param string $host     The host of the connection
+     * @param int    $port     The port for the connection
+     * @param bool   $authMode Whether or not the connection use the authentication extension
      * @param string|null Authentication login
      * @param string|null Authentication password
      *
@@ -163,7 +178,7 @@ class ClientBuilder
     }
 
     /**
-     * Enables the High Availibility Mode
+     * Enables the High Availibility Mode.
      *
      * @return $this
      */
@@ -173,6 +188,13 @@ class ClientBuilder
         $this->configuration['ha_mode']['type'] = 'enterprise';
 
         return $this;
+    }
+
+    public function configureHAQueryModeHeaders($headerKey, $writeModeHeaderValue, $readModeHeaderValue)
+    {
+        $this->configuration['ha_mode']['query_mode_header_key'] = $headerKey;
+        $this->configuration['ha_mode']['write_mode_header_value'] = $writeModeHeaderValue;
+        $this->configuration['ha_mode']['read_mode_header_value'] = $readModeHeaderValue;
     }
 
     /**
@@ -230,6 +252,18 @@ class ClientBuilder
         }
 
         $this->configuration['response_formatter_class'] = $class;
+
+        return $this;
+    }
+
+    /**
+     * Enables the new formatting service from GraphAware.
+     */
+    public function enableNewFormattingService()
+    {
+        $this->configuration['enable_new_response_format_mode'] = true;
+
+        return $this;
     }
 
     /**
@@ -484,7 +518,7 @@ class ClientBuilder
             $this->checkForHaConfig();
         }
 
-        $client = $this->serviceContainer->get('neoclient.client');
+        $client = $this->getClient();
 
         return $client;
     }
@@ -505,6 +539,11 @@ class ClientBuilder
         return true === $this->getServiceContainer()->isFrozen();
     }
 
+    /**
+     * Erases the HAFailureFile.
+     *
+     * @return $this
+     */
     public function resetHaFailureFile()
     {
         $file = sys_get_temp_dir().DIRECTORY_SEPARATOR.'neoclient_ha_config_after_failure';
@@ -515,6 +554,11 @@ class ClientBuilder
         return $this;
     }
 
+    /**
+     * Returns whether or not the check for the failure file should be done.
+     *
+     * @return $this
+     */
     public function skipHaFailureFileCheck()
     {
         $this->skipHaFailureFileCheck = true;
@@ -525,7 +569,7 @@ class ClientBuilder
     private function checkConnection($alias)
     {
         if (!array_key_exists($alias, $this->configuration['connections'])) {
-            throw new Neo4jException(sprintf('The connection "%s" has not been registered', "%s"));
+            throw new Neo4jException(sprintf('The connection "%s" has not been registered', '%s'));
         }
 
         return true;
@@ -560,5 +604,13 @@ class ClientBuilder
             $cm->setMasterConnection($newConfig['master']);
             $cm->setSlaveConnections($newConfig['slaves']);
         }
+    }
+
+    /**
+     * @return \Neoxygen\NeoClient\Client
+     */
+    private function getClient()
+    {
+        return $this->serviceContainer->get('neoclient.client');
     }
 }

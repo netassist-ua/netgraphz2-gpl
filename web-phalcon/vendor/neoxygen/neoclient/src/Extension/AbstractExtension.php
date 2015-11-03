@@ -2,6 +2,7 @@
 
 namespace Neoxygen\NeoClient\Extension;
 
+use GraphAware\NeoClient\Formatter\ResponseFormattingService;
 use Neoxygen\NeoClient\Request\Response;
 use Neoxygen\NeoClient\Command\CommandManager;
 use Neoxygen\NeoClient\Formatter\ResponseFormatterManager;
@@ -24,23 +25,35 @@ abstract class AbstractExtension implements NeoClientExtensionInterface
 
     protected $resultDataContent;
 
+    public $newFormatModeEnabled;
+
+    /**
+     * @var \GraphAware\NeoClient\Formatter\ResponseFormattingService
+     */
+    public $newFormattingService;
+
     public function __construct(
         CommandManager $commandManager,
         ConnectionManager $connectionManager,
         ResponseFormatterManager $responseFormatter,
         $autoFormatResponse,
-        $resultDataContent)
+        $resultDataContent,
+        $newFormatModeEnabled)
     {
         $this->commandManager = $commandManager;
         $this->connectionManager = $connectionManager;
         $this->responseFormatter = $responseFormatter->getResponseFormatter();
         $this->autoFormatResponse = $autoFormatResponse;
         $this->resultDataContent = $resultDataContent;
+        $this->newFormatModeEnabled = $newFormatModeEnabled;
+        if ($this->newFormatModeEnabled) {
+            $this->newFormattingService = new ResponseFormattingService();
+        }
     }
 
     /**
-     * @param $commandAlias
-     * @param null $connectionAlias
+     * @param string      $commandAlias
+     * @param null|string $connectionAlias
      *
      * @return \Neoxygen\NeoClient\Command\AbstractCommand
      */
@@ -65,7 +78,7 @@ abstract class AbstractExtension implements NeoClientExtensionInterface
     }
 
     /**
-     * @param mixed $response
+     * @param Response $response
      *
      * @return string|array|\Neoxygen\NeoClient\Formatter\Response
      *
@@ -73,6 +86,21 @@ abstract class AbstractExtension implements NeoClientExtensionInterface
      */
     public function handleHttpResponse(Response $response)
     {
+        if ($this->newFormatModeEnabled) {
+            $newResponse = $this->newFormattingService->formatResponse($response->getRaw());
+
+            if ($newResponse->hasError()) {
+                $error = $newResponse->getError();
+                throw new Neo4jException(sprintf(
+                    $error->getCode(),
+                    $error->getMessage(),
+                    Neo4jException::fromCode($error->getCode())
+                ));
+            }
+
+            return $newResponse;
+        }
+
         $this->checkResponseErrors($response->getBody());
         if ($this->autoFormatResponse) {
             $formatted = $this->formatResponse($response->getBody());

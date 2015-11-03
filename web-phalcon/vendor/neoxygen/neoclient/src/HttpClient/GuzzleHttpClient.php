@@ -21,15 +21,16 @@ use Neoxygen\NeoClient\Event\HttpClientPreSendRequestEvent;
 use Neoxygen\NeoClient\Event\PostRequestSendEvent;
 use Neoxygen\NeoClient\Event\HttpExceptionEvent;
 use Neoxygen\NeoClient\Client as BaseClient;
+use Psr\Http\Message\ResponseInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class GuzzleHttpClient implements HttpClientInterface
 {
-    private $client;
+    protected $client;
 
-    private $eventDispatcher;
+    protected $eventDispatcher;
 
-    private $defaultTimeout;
+    protected $defaultTimeout;
 
     public function __construct($defaultTimeOut, EventDispatcherInterface $eventDispatcher)
     {
@@ -77,9 +78,9 @@ class GuzzleHttpClient implements HttpClientInterface
         }
     }
 
-    private function getResponse(HttpResponse $httpResponse)
+    private function getResponse(ResponseInterface $httpResponse)
     {
-        $response = new Response();
+        $response = new Response($httpResponse);
 
         if ($httpResponse->getBody()) {
             $resp = (string) $httpResponse->getBody();
@@ -112,6 +113,6 @@ class GuzzleHttpClient implements HttpClientInterface
 
     private function getUserAgent()
     {
-        return 'NeoClient-PHP/v-' . BaseClient::getNeoClientVersion();
+        return 'NeoClient-PHP/v-'.BaseClient::getNeoClientVersion();
     }
 }

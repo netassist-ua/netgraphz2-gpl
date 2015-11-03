@@ -11,12 +11,16 @@
 
 namespace Neoxygen\NeoClient\Extension;
 
-use Neoxygen\NeoClient\Exception\Neo4jException,
-    Neoxygen\NeoClient\Exception\CypherException;
+use Neoxygen\NeoClient\Exception\Neo4jException;
+use Neoxygen\NeoClient\Exception\CypherException;
+use Neoxygen\NeoClient\Schema\Index;
+use Neoxygen\NeoClient\Schema\UniqueConstraint;
 use Neoxygen\NeoClient\Transaction\PreparedTransaction;
 use Symfony\Component\Yaml\Yaml;
 use Neoxygen\NeoClient\Transaction\Transaction;
 use Neoxygen\NeoClient\Request\Response;
+use Neoxygen\NeoClient\Client;
+use GuzzleHttp\Psr7\Response as PsrResponse;
 
 class NeoClientCoreExtension extends AbstractExtension
 {
@@ -89,7 +93,7 @@ class NeoClientCoreExtension extends AbstractExtension
         }
 
         $httpResponse = $command->setArguments($query, $parameters, $this->resultDataContent, $queryMode)
-            ->execute();
+          ->execute();
 
         return $this->handleHttpResponse($httpResponse);
     }
@@ -144,12 +148,42 @@ class NeoClientCoreExtension extends AbstractExtension
     }
 
     /**
+     * Creates a Schema Index based on label and property.
+     *
+     * @param string $label
+     * @param string $property
+     *
+     * @return \Neoxygen\NeoClient\Schema\Index
+     */
+    public function createSchemaIndex($label, $property, $conn = null)
+    {
+        $statement = 'CREATE INDEX ON :'.$label.'('.$property.')';
+        $this->sendCypherQuery($statement, array(), $conn = null, self::WRITE_QUERY);
+
+        return new Index($label, $property);
+    }
+
+    /**
+     * Removes a Schema Index.
+     *
+     * @param \Neoxygen\NeoClient\Schema\Index $index
+     * @param string|null                      $conn
+     */
+    public function dropSchemaIndex(Index $index, $conn = null)
+    {
+        $statement = 'DROP INDEX ON :'.$index->getLabel().'('.$index->getProperty().')';
+        $this->sendCypherQuery($statement, array(), $conn, self::WRITE_QUERY);
+    }
+
+    /**
      * Creates an index on a label.
      *
      * @param string       $label
      * @param string|array $property
      *
      * @return bool
+     *
+     * @deprecated will be removed in 4.0
      */
     public function createIndex($label, $property)
     {
@@ -189,6 +223,9 @@ class NeoClientCoreExtension extends AbstractExtension
                 $propertiesIndexed[] = $key;
             }
         }
+        if ($response instanceof \GraphAware\NeoClient\Formatter\Response) {
+            return new \GraphAware\NeoClient\Formatter\Response(new PsrResponse(200, array(), json_encode($propertiesIndexed)));
+        }
         $response->setBody($propertiesIndexed);
 
         return $response;
@@ -224,6 +261,7 @@ class NeoClientCoreExtension extends AbstractExtension
      * @param string|null $conn
      *
      * @return Response
+     * @deprecetad Will be removed in 4.0
      */
     public function listIndexes(array $labels = array(), $conn = null)
     {
@@ -232,14 +270,48 @@ class NeoClientCoreExtension extends AbstractExtension
         }
         $indexes = [];
         foreach ($labels as $label) {
-            $indexs = $this->listIndex($label, $conn)->getBody();
+            $res = $this->listIndex($label, $conn);
+            $indexs = $res->getBody();
             $indexes[$label] = $indexs;
         }
 
-        $response = new Response();
+        if (!isset($res)){
+            if ($this->newFormatModeEnabled) {
+                $res = new \GraphAware\NeoClient\Formatter\Response(new PsrResponse(200));
+            } else {
+                $res = new Response(new PsrResponse(200));
+            }
+        }
+
+        if ($res instanceof \GraphAware\NeoClient\Formatter\Response) {
+            return new \GraphAware\NeoClient\Formatter\Response(new PsrResponse(200, [], json_encode($indexes)));
+        }
+
+        $response = new Response($res->getRaw());
         $response->setBody($indexes);
 
         return $response;
+    }
+
+    /**
+     * Returns the schema indexes live in the database.
+     *
+     * @param null $conn
+     *
+     * @return \Neoxygen\NeoClient\Schema\Index[]
+     */
+    public function getSchemaIndexes($conn = null)
+    {
+        $indx = [];
+        $labels = $this->getLabels($conn)->getBody();
+        foreach ($labels as $label) {
+            $indexes = $this->listIndex($label, $conn)->getBody();
+            foreach ($indexes as $property) {
+                $indx[] = new Index($label, $property);
+            }
+        }
+
+        return $indx;
     }
 
     /**
@@ -281,6 +353,11 @@ class NeoClientCoreExtension extends AbstractExtension
                 $constraints[$constraint['label']][] = $key;
             }
         }
+        if ($responseO instanceof \GraphAware\NeoClient\Formatter\Response) {
+            $msg = new PsrResponse(200, array(), json_encode($constraints));
+            return new \GraphAware\NeoClient\Formatter\Response($msg);
+        }
+
         $responseO->setBody($constraints);
 
         return $responseO;
@@ -322,6 +399,68 @@ class NeoClientCoreExtension extends AbstractExtension
     }
 
     /**
+     * @param $label
+     * @param $property
+     * @param bool $transformIndexInConstraint
+     * @param null $conn
+     *
+     * @return \Neoxygen\NeoClient\Schema\UniqueConstraint
+     *
+     * @throws \Neoxygen\NeoClient\Exception\Neo4jException
+     */
+    public function createSchemaUniqueConstraint($label, $property, $transformIndexInConstraint = false, $conn = null)
+    {
+        $q = 'CREATE CONSTRAINT ON (n:'.$label.') ASSERT n.'.$property.' IS UNIQUE';
+        try {
+            $this->sendCypherQuery($q);
+
+            return new UniqueConstraint($label, $property);
+        } catch (Neo4jException $e) {
+            if (true === $transformIndexInConstraint && 8000 === $e->getCode()) {
+                // do remove constraint
+            }
+
+            throw $e;
+        }
+    }
+
+    /**
+     * Drops a Uniqueness constraint from the Schema.
+     *
+     * @param \Neoxygen\NeoClient\Schema\UniqueConstraint $constraint
+     * @param null                                        $conn
+     */
+    public function dropSchemaUniqueConstraint(UniqueConstraint $constraint, $conn = null)
+    {
+        $q = 'DROP CONSTRAINT ON (n:'.$constraint->getLabel().') ASSERT n.'.$constraint->getProperty().' IS UNIQUE';
+        $this->sendCypherQuery($q);
+    }
+
+    /**
+     * Returns a collection of Uniqueness constraints live in the schema.
+     *
+     * @param null $conn
+     *
+     * @return \Neoxygen\NeoClient\Schema\UniqueConstraint[]
+     */
+    public function getSchemaUniqueConstraints($conn = null)
+    {
+        $command = $this->invoke('neo.get_constraints_command', $conn);
+        $httpResponse = $command->execute();
+
+        $responseO = $this->handleHttpResponse($httpResponse);
+        $response = $responseO->getBody();
+        $constraints = [];
+        foreach ($response as $constraint) {
+            foreach ($constraint['property_keys'] as $key) {
+                $constraints[] = new UniqueConstraint($constraint['label'], $key);
+            }
+        }
+
+        return $constraints;
+    }
+
+    /**
      * Drops a unique constraint on a label.
      *
      * @param string       $label
@@ -354,9 +493,9 @@ class NeoClientCoreExtension extends AbstractExtension
      *
      * @return Transaction
      */
-    public function createTransaction($conn = null)
+    public function createTransaction($conn = null, $queryMode = Client::NEOCLIENT_QUERY_MODE_WRITE)
     {
-        $transaction = new Transaction($conn, $this);
+        $transaction = new Transaction($conn, $this, $queryMode);
 
         return $transaction;
     }
@@ -368,9 +507,10 @@ class NeoClientCoreExtension extends AbstractExtension
      *
      * @return mixed
      */
-    public function openTransaction($conn = null)
+    public function openTransaction($conn = null, $queryMode = self::WRITE_QUERY)
     {
         $command = $this->invoke('neo.open_transaction', $conn);
+        $command->setArguments($queryMode);
         $httpResponse = $command->execute();
 
         return $this->handleHttpResponse($httpResponse);
@@ -387,8 +527,8 @@ class NeoClientCoreExtension extends AbstractExtension
     public function rollBackTransaction($id, $conn = null)
     {
         $response = $this->invoke('neo.rollback_transaction', $conn)
-            ->setTransactionId($id)
-            ->execute();
+          ->setTransactionId($id)
+          ->execute();
 
         return $this->handleHttpResponse($response);
     }
@@ -404,11 +544,11 @@ class NeoClientCoreExtension extends AbstractExtension
      *
      * @return mixed
      */
-    public function pushToTransaction($transactionId, $query, array $parameters = array(), $conn = null)
+    public function pushToTransaction($transactionId, $query, array $parameters = array(), $conn = null, $queryMode = Client::NEOCLIENT_QUERY_MODE_WRITE)
     {
         $httpResponse = $this->invoke('neo.push_to_transaction', $conn)
-            ->setArguments($transactionId, $query, $parameters, $this->resultDataContent)
-            ->execute();
+          ->setArguments($transactionId, $query, $parameters, $this->resultDataContent, $queryMode)
+          ->execute();
 
         return $this->handleHttpResponse($httpResponse);
     }
@@ -416,8 +556,8 @@ class NeoClientCoreExtension extends AbstractExtension
     public function pushMultipleToTransaction($transactionId, array $statements, $conn = null)
     {
         $response = $this->invoke('neo.push_multiple_to_transaction', $conn)
-            ->setArguments($transactionId, $statements, $this->resultDataContent)
-            ->execute();
+          ->setArguments($transactionId, $statements, $this->resultDataContent)
+          ->execute();
 
         return $this->handleHttpResponse($response);
     }
@@ -433,11 +573,11 @@ class NeoClientCoreExtension extends AbstractExtension
      *
      * @return mixed
      */
-    public function commitTransaction($transactionId, $query = null, array $parameters = array(), $conn = null)
+    public function commitTransaction($transactionId, $query = null, array $parameters = array(), $conn = null, $queryMode = self::WRITE_QUERY)
     {
         $response = $this->invoke('neo.commit_transaction', $conn)
-            ->setArguments($transactionId, $query, $parameters)
-            ->execute();
+          ->setArguments($transactionId, $query, $parameters, $this->resultDataContent, $queryMode)
+          ->execute();
 
         return $this->handleHttpResponse($response);
     }
@@ -445,8 +585,8 @@ class NeoClientCoreExtension extends AbstractExtension
     public function changePassword($user, $newPassword, $conn = null)
     {
         $response = $this->invoke('neo.core_change_password', $conn)
-            ->setArguments($user, $newPassword)
-            ->execute();
+          ->setArguments($user, $newPassword)
+          ->execute();
 
         return $response;
     }
@@ -459,7 +599,7 @@ class NeoClientCoreExtension extends AbstractExtension
     public function listUsers($connectionAlias = null)
     {
         $response = $this->invoke('neo.list_users', $connectionAlias)
-            ->execute();
+          ->execute();
 
         return $this->handleHttpResponse($response);
     }
@@ -475,10 +615,10 @@ class NeoClientCoreExtension extends AbstractExtension
     public function addUser($user, $password, $readOnly = false, $connectionAlias = null)
     {
         $response = $this->invoke('neo.add_user', $connectionAlias)
-            ->setReadOnly($readOnly)
-            ->setUser($user)
-            ->setPassword($password)
-            ->execute();
+          ->setReadOnly($readOnly)
+          ->setUser($user)
+          ->setPassword($password)
+          ->execute();
 
         return $this->handleHttpResponse($response);
     }
@@ -493,9 +633,9 @@ class NeoClientCoreExtension extends AbstractExtension
     public function removeUser($user, $password, $connectionAlias = null)
     {
         $response = $this->invoke('neo.remove_user', $connectionAlias)
-            ->setUser($user)
-            ->setPassword($password)
-            ->execute();
+          ->setUser($user)
+          ->setPassword($password)
+          ->execute();
 
         return $this->handleHttpResponse($response);
     }
@@ -555,7 +695,7 @@ class NeoClientCoreExtension extends AbstractExtension
     public function checkHAMaster($conn = null)
     {
         $response = $this->invoke('neo.core_get_ha_master', $conn)
-            ->execute();
+          ->execute();
 
         return $this->handleHttpResponse($response);
     }
@@ -568,7 +708,7 @@ class NeoClientCoreExtension extends AbstractExtension
     public function checkHASlave($conn = null)
     {
         $response = $this->invoke('neo.core_get_ha_slave', $conn)
-            ->execute();
+          ->execute();
 
         return $this->handleHttpResponse($response);
     }
@@ -581,7 +721,7 @@ class NeoClientCoreExtension extends AbstractExtension
     public function checkHAAvailable($conn = null)
     {
         $response = $this->invoke('neo.core_get_ha_available', $conn)
-            ->execute();
+          ->execute();
 
         return $this->handleHttpResponse($response);
     }
@@ -621,10 +761,10 @@ class NeoClientCoreExtension extends AbstractExtension
                     $value = $value->format('Ymdhis');
                 }
                 $parameters['start_'.$key] = $value;
-                if ($i < $propsCount -1) {
+                if ($i < $propsCount - 1) {
                     $startNPattern .= ', ';
                 }
-                $i++;
+                ++$i;
             }
             $startNPattern .= '}';
         }
@@ -649,10 +789,10 @@ class NeoClientCoreExtension extends AbstractExtension
                     $value = $value->format('Ymdhis');
                 }
                 $parameters['end_'.$key] = $value;
-                if ($i < $propsCount -1) {
+                if ($i < $propsCount - 1) {
                     $endNPattern .= ', ';
                 }
-                $i++;
+                ++$i;
             }
             $endNPattern .= '}';
         }
@@ -703,8 +843,8 @@ class NeoClientCoreExtension extends AbstractExtension
     private function checkPathNode(array $node)
     {
         if ((!isset($node['label']) || empty($node['label']))
-            && (!isset($node['properties']) || empty($node['properties']))
-            && (!isset($node['id']) || empty($node['id']))) {
+          && (!isset($node['properties']) || empty($node['properties']))
+          && (!isset($node['id']) || empty($node['id']))) {
             throw new \InvalidArgumentException('The node must contain a label or properties');
         }
     }

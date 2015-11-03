@@ -77,6 +77,9 @@ class Definition implements ConfigurationInterface
         ->arrayNode('ha_mode')
             ->children()
                 ->booleanNode('enabled')->CanNotBeEmpty()->end()
+                ->scalarNode('query_mode_header_key')->defaultValue('Neo4j-Query-Mode')->end()
+                ->scalarNode('write_mode_header_value')->defaultValue('NEO4J_QUERY_WRITE')->end()
+                ->scalarNode('read_mode_header_value')->defaultValue('NEO4J_QUERY_READ')->end()
                 ->scalarNode('type')->canNotBeEmpty()->end()
                 ->scalarNode('master')->end()
                 ->arrayNode('slaves')
@@ -93,7 +96,8 @@ class Definition implements ConfigurationInterface
                 ->end()
         ->end()
         ->scalarNode('response_formatter_class')->defaultValue('Neoxygen\NeoClient\Formatter\ResponseFormatter')->end()
-        ->booleanNode('auto_format_response')->defaultValue(false)
+        ->booleanNode('auto_format_response')->defaultValue(false)->end()
+        ->booleanNode('enable_new_response_format_mode')->defaultValue(false)->end()
         ->end()
         ->end();
 

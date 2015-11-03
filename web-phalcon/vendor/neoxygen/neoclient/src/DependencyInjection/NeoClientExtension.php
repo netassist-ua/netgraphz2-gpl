@@ -11,7 +11,6 @@
 
 namespace Neoxygen\NeoClient\DependencyInjection;
 
-use Doctrine\Instantiator\Exception\InvalidArgumentException;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
 use Symfony\Component\DependencyInjection\Extension\ExtensionInterface;
@@ -56,6 +55,7 @@ class NeoClientExtension implements  ExtensionInterface
         $container->setParameter('neoclient.response_format', $resultDataContent);
         $container->setParameter('neoclient.auto_format_response', $config['auto_format_response']);
         $container->setParameter('neoclient.result_data_content', $resultDataContent);
+        $container->setParameter('neoclient.new_format_mode_enabled', $config['enable_new_response_format_mode']);
 
         if (isset($config['ha_mode'])) {
             $connectionManager = $container->getDefinition('neoclient.connection_manager');
@@ -70,6 +70,9 @@ class NeoClientExtension implements  ExtensionInterface
                         ->addArgument($connectionManager)
                         ->addArgument($commandManager)
                         ->addArgument($httpClient)
+                        ->addArgument($config['ha_mode']['query_mode_header_key'])
+                        ->addArgument($config['ha_mode']['write_mode_header_value'])
+                        ->addArgument($config['ha_mode']['read_mode_header_value'])
                         ->addTag('neoclient.service_event_subscriber');
                     $container->setDefinition('neoclient.ha_manager', $definition);
                     break;
@@ -129,7 +132,6 @@ class NeoClientExtension implements  ExtensionInterface
         // Registering Core Commands
         $this->registerCoreExtension('neoclient_core', array('class' => 'Neoxygen\NeoClient\Extension\NeoClientCoreExtension'));
         $this->registerCoreExtension('neoclient_auth', array('class' => 'Neoxygen\NeoClient\Extension\NeoClientAuthExtension'));
-        $this->registerCoreExtension('neoclient_changefeed', array('class' => 'Neoxygen\NeoClient\Extension\NeoClientChangeFeedExtension'));
     }
 
     private function registerCoreExtension($alias, $props)

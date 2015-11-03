@@ -2,6 +2,9 @@
 /web-phalcon/cache/
 /web-phalcon/app/cache/
 /web-phalcon/config/development/
+/web-phalcon/composer.lock
+
+
 /icinga_config_generator/out/
 /icinga_config_generator/configs.tar
 nbproject/private/
@@ -25,6 +28,7 @@ backend/depcomp
 backend/install-sh
 backend/missing
 backend/stamp-h1
+
 
 
 .deps
