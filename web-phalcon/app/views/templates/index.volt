@@ -19,6 +19,9 @@
   {{ javascriptInclude("js/socket.io.js") }}
   {{ javascriptInclude("js/desktop-notify-min.js") }}
   {{ javascriptInclude("js/toastr.min.js") }}
+
+  {{ javascriptInclude("js/netgraphz/fetcher.js") }}
+  {{ javascriptInclude("js/netgraphz/status.js") }}
   {% block head %}{% endblock %}
   {{ get_title() }}
 </head>
@@ -46,6 +49,17 @@
           </ul>
         </div>
         <div class="navbar-right">
+          <ul class="navbar-nav nav navbar-counts">
+          <li>
+            <p id="node_count" class="text-primary">Nodes: </p>
+            <p id="links_count" class="text-primary">Links: </p>
+          </li>
+          <li>
+             <span class="label label-success" id="status_nodes_count">?</span>
+             <br>
+             <span class="label label-success" id="status_links_count">?</span>
+          </li>
+          </ul>
           {% if auth.getIdentity() == null %}
             {{ link_to("Account/Login", "Login", "class": "btn btn-default navbar-btn") }}
           {% else %}

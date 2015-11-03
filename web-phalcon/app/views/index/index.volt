@@ -11,7 +11,6 @@
 {{ javascriptInclude("js/netgraphz/tools.js") }}
 {{ javascriptInclude("js/netgraphz/eventbus.js") }}
 {{ javascriptInclude("js/netgraphz/store.js") }}
-{{ javascriptInclude("js/netgraphz/fetcher.js") }}
 {{ javascriptInclude("js/netgraphz/updater.js") }}
 {{ javascriptInclude("js/netgraphz/renderer.js") }}
 {{ javascriptInclude("js/netgraphz/ui.js") }}
@@ -26,11 +25,6 @@
 
 {%block page_header%}
 <div class="page-header">
-    <h3>{{config.information.companyName}} network graph</h3>
-    <div class="netgraphz-statusstrip">
-      <p id="node_count" class="text-primary">Nodes: <span class="label label-success"><?php echo $node_count ?></span></p>
-      <p id="links_count" class="text-primary">Links: <span class="label label-success"><?php echo $link_count ?></span></p>
-    </div>
     <div class="toolstrip">
       <div class="toolstrip-left">
         <button id="graph_resetzoom" type="button" class="btn btn-default">Reset zoom</button>

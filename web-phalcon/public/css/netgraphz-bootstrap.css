@@ -26,6 +26,19 @@ header.navbar {
 	float: right;
 }
 
+.navbar-counts {
+		padding-right: 10px;
+}
+
+.navbar-counts > li {
+		padding-top: 2px;
+		padding-right: 10px;
+}
+
+.navbar-counts > li > p {
+		margin: 0;
+}
+
 #node-name-search {
 	margin: 5px 0 -7px 10px; //fucking precise, hate this css shit
 }

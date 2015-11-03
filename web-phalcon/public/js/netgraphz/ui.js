@@ -1,7 +1,7 @@
 //User interface interaction module
 
 var netgraphz = netgraphz || {};
-netgraphz.ui = (function(store, settings, renderer, eventBus, $){
+netgraphz.ui = (function(store, settings, renderer, eventBus, fetcher, $){
 	var _publisher = eventBus.registerPublisher("ui");
 	var exports = {};
 	var $cbFollow;
@@ -141,4 +141,4 @@ netgraphz.ui = (function(store, settings, renderer, eventBus, $){
 	};
 
 	return exports;
-})(netgraphz.store, netgraphz.settings.ui, netgraphz.renderer, netgraphz.eventBus, $);
+})(netgraphz.store, netgraphz.settings.ui, netgraphz.renderer, netgraphz.eventBus, netgraphz.fetcher, $);

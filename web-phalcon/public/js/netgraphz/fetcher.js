@@ -27,6 +27,10 @@ netgraphz.fetcher = (function(ng){
 		});
 	};
 
+	module.fetchStatus = function(callback){
+			_fetch_json_get("/Graph/status", {}, callback);
+	};
+
 	module.fetchUserParameters = function(callback){
 			_fetch_json_get("/Graph/userParams", {}, callback);
 	};

@@ -77,7 +77,24 @@ class GraphController extends ControllerBase {
   }
 
   /**
-  * DELETE /Graph/Positions
+  * GET /Graph/status
+  *
+  */
+  public function getStatusAction(){
+      $this->view->setRenderLevel(View::LEVEL_NO_RENDER);
+      $node_count = $this->_nodesRepo->CountAllNodes();
+      $link_count = ceil($this->_linksRepo->CountAllLinks() / 2);
+      return $this->sendJsonResponse(array(
+          "works" => true,
+          "counts" => array(
+              "nodes" => $node_count,
+              "links" => $link_count
+          )
+      ));
+  }
+
+  /**
+  * DELETE /Graph/positions
   *
   */
   public function deletePositionsAction(){
@@ -106,7 +123,7 @@ class GraphController extends ControllerBase {
   }
 
   /**
-  * GET   /Graph/UserParameters
+  * GET   /Graph/userParams
   */
   public function getUserParametersAction(){
     $this->view->setRenderLevel(View::LEVEL_NO_RENDER);
