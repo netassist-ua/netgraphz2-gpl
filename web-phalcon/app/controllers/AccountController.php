@@ -26,17 +26,9 @@ class AccountController extends ControllerBase {
     return $user != false;
   }
 
-  private function getUserByLogin($username){
-    return Users::findFirst(array(
-      array(
-        "name" => $username
-      )
-    ));
-  }
-
   private function isUsernameExists($username){
     return $this->isUserFoundByConditions(array(
-      "name" => $username
+      "login" => $username
     ));
   }
 
