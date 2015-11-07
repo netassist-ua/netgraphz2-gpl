@@ -23,7 +23,7 @@ class AccountController extends ControllerBase {
     $user = Users::findFirst(array(
       $conditions
     ));
-    return $user != null;
+    return $user != false;
   }
 
   private function getUserByLogin($username){
