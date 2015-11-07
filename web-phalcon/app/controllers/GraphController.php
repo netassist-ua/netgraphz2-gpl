@@ -30,7 +30,36 @@ class GraphController extends ControllerBase {
     parent::initialize();
   }
 
-  private function sendStateReponse(bool $state, int $error_code, string $error){
+  /**
+  *
+  *  Returns parameters response JSON array
+  *
+  *  @param boolean $logged_in Is user logged in
+  *  @param boolean $has_positions Checks if user have positions stored
+  *  @param array|null $params
+  *
+  *  @return array Parameters response array
+  */
+  private function getParamsResponseJson($logged_in, $has_positions, $params = null){
+      if(!isset($params) || $params == null)
+        $params = array();
+      return array(
+          "logged" => $logged_in,
+          "positions" => $has_positions,
+          "params" => $params
+      );
+  }
+
+  /**
+  *
+  * Sends JSON state response to the client
+  *
+  * @param int|boolean $state State number or success-fail value
+  * @param int|null $error_code HTTP error code to send (200 by default)
+  * @param string|null $error Error description to send
+  * @return boolean Result
+  */
+  private function sendStateResponse($state, $error_code, $error){
       $base = array(
           "state" => $state
       );
@@ -43,10 +72,17 @@ class GraphController extends ControllerBase {
       else {
         $error_code = 200;
       }
-      $this->sendJsonResponse($base, $error_code);
-      return $state;
+      return $this->sendJsonResponse($base, $error_code);
   }
 
+  /**
+  *
+  * Appends stored position coordinates (x,y) from user profile to nodes
+  * Return original array if no positions stored or user is not logged in
+  *
+  * @param \NetAssist\Graph\Nodes[] Nodes to append
+  * @return \NetAssist\Graph\Nodes[] Nodes with appended postions
+  */
   private function appendUserPositions($nodes){
       $identity = $this->auth->getIdentity();
       if(!$identity || $identity == null){
@@ -76,9 +112,11 @@ class GraphController extends ControllerBase {
       return $nodes;
   }
 
+
+
   /**
   * GET /Graph/status
-  *
+  * Get application status JSON
   */
   public function getStatusAction(){
       $this->view->setRenderLevel(View::LEVEL_NO_RENDER);
@@ -95,19 +133,19 @@ class GraphController extends ControllerBase {
 
   /**
   * DELETE /Graph/positions
-  *
+  * Delete stored use nodes positions
   */
   public function deletePositionsAction(){
       $this->view->setRenderLevel(View::LEVEL_NO_RENDER);
       $identity = $this->auth->getIdentity();
       if(!$identity){
-          return $this->sendStateReponse(false, 417, "Not logged in");
+          return $this->sendStateResponse(false, 417, "Not logged in");
       }
       $uid = $this->auth->getUserId();
       $m_now = new \MongoDate(time());
       $user = Users::findById($uid);
       if($user != false){
-          return $this->sendStateReponse(false, 417, "Not logged in");
+          return $this->sendStateResponse(false, 417, "Not logged in");
       }
       $u_nodes = UserNodes::findFirst(array(
           array(
@@ -116,14 +154,15 @@ class GraphController extends ControllerBase {
       ));
       if($u_nodes != false){
           if($u_nodes->delete() == false){
-              return $this->sendStateReponse(false, 500, sprintf("User positions not deleted"));
+              return $this->sendStateResponse(false, 500, sprintf("User positions not deleted"));
           }
       }
-      return $this->sendStateReponse(true);
+      return $this->sendStateResponse(true);
   }
 
   /**
   * GET   /Graph/userParams
+  * Get logged user parameters JSON
   */
   public function getUserParametersAction(){
     $this->view->setRenderLevel(View::LEVEL_NO_RENDER);
@@ -148,30 +187,10 @@ class GraphController extends ControllerBase {
     return $this->sendJsonResponse($this->getParamsResponseJson(true, true, $params));
   }
 
-  /**
-  *
-  *  Returns parameters response JSON array
-  *
-  *  @param boolean $logged_in Is user logged in
-  *  @param boolean $has_positions Checks if user have positions stored
-  *  @param array|null $params
-  *
-  *  @return array Parameters response array
-  */
-  private function getParamsResponseJson($logged_in, $has_positions, $params = null){
-      if(!isset($params) || $params == null)
-        $params = array();
-      return array(
-          "logged" => $logged_in,
-          "positions" => $has_positions,
-          "params" => $params
-      );
-  }
-
-
 
   /**
   * POST  /Graph/Positions
+  * Save user node positions
   */
   public function savePositionsAction(){
       $this->view->setRenderLevel(View::LEVEL_NO_RENDER);
@@ -204,8 +223,10 @@ class GraphController extends ControllerBase {
           $position->node_id = $node_id;
           $u_nodes->positions[$node_id] = $position;
       }
-      $u_nodes->save();
-      return $this->sendStateReponse(true);
+      if($u_nodes->save() == false){
+          return $this->sendStateResponse(false, 500, "MongoDB save failure");
+      }
+      return $this->sendStateResponse(true);
   }
 
   /*
