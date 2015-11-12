@@ -10,7 +10,7 @@ return new \Phalcon\Config(array(
         'openSignUp' => true
      ),
      'mongo' => array(
-       'connectionString' => 'mongodb://localhost:27017',
+       'connectionString' => 'mongodb://localhost:27017/?connectTimeoutMS=1200',
        'database' => 'netgraphz2',
        'options' => array()
      ),

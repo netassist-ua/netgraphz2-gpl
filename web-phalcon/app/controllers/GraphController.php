@@ -10,6 +10,9 @@ use NetAssist\Models\Users;
 use NetAssist\Models\UserNodes;
 use NetAssist\Models\NodePosition;
 
+use \Exception;
+use \MongoDate;
+
 class GraphController extends ControllerBase {
   /**
   * Nodes repository
@@ -40,13 +43,15 @@ class GraphController extends ControllerBase {
   *
   *  @return array Parameters response array
   */
-  private function getParamsResponseJson($logged_in, $has_positions, $params = null){
+  private function getParamsResponseJson($logged_in, $has_positions, $params = null, $error = false, $error_message = null){
       if(!isset($params) || $params == null)
         $params = array();
       return array(
           "logged" => $logged_in,
           "positions" => $has_positions,
-          "params" => $params
+          "params" => $params,
+          "error" => $error,
+          "error_message" => $error_message
       );
   }
 
@@ -81,23 +86,23 @@ class GraphController extends ControllerBase {
   * Return original array if no positions stored or user is not logged in
   *
   * @param \NetAssist\Graph\Nodes[] Nodes to append
-  * @return \NetAssist\Graph\Nodes[] Nodes with appended postions
+  * @return \NetAssist\Graph\Nodes[] Nodes with appended positions
   */
   private function appendUserPositions($nodes){
-      $identity = $this->auth->getIdentity();
-      if(!$identity || $identity == null){
-          return $nodes;
-      }
-      $uid = $this->auth->getUserId();
-      $u_nodes = UserNodes::findFirst(array(
-        array(
-            "userId" => $uid
-        )
-      ));
-      if($u_nodes == null){
-          return $nodes;
-      }
       try {
+        $identity = $this->auth->getIdentity();
+        if(!$identity || $identity == null){
+            return $nodes;
+        }
+        $uid = $this->auth->getUserId();
+        $u_nodes = UserNodes::findFirst(array(
+          array(
+              "userId" => $uid
+          )
+        ));
+        if($u_nodes == null){
+            return $nodes;
+        }
         foreach ($nodes as $node) {
             if(array_key_exists($node->id, $u_nodes->positions)){
               $pos = (object)$u_nodes->positions[$node->id];
@@ -107,7 +112,7 @@ class GraphController extends ControllerBase {
         }
       }
       catch(Exception $e) {
-
+          error_log(sprintf("Couldn't fetch user graph position, error: %s", addslashes($e->getMessage())), 0);
       }
       return $nodes;
   }
@@ -141,21 +146,26 @@ class GraphController extends ControllerBase {
       if(!$identity){
           return $this->sendStateResponse(false, 417, "Not logged in");
       }
-      $uid = $this->auth->getUserId();
-      $m_now = new \MongoDate(time());
-      $user = Users::findById($uid);
-      if($user != false){
-          return $this->sendStateResponse(false, 417, "Not logged in");
+      try {
+        $uid = $this->auth->getUserId();
+        $user = Users::findById($uid);
+        if($user != false){
+            return $this->sendStateResponse(false, 417, "Not logged in");
+        }
+        $u_nodes = UserNodes::findFirst(array(
+            array(
+                "userId" => $uid
+            )
+        ));
+        if($u_nodes != false){
+            if($u_nodes->delete() == false){
+                return $this->sendStateResponse(false, 500, sprintf("User positions not deleted"));
+            }
+        }
       }
-      $u_nodes = UserNodes::findFirst(array(
-          array(
-              "userId" => $uid
-          )
-      ));
-      if($u_nodes != false){
-          if($u_nodes->delete() == false){
-              return $this->sendStateResponse(false, 500, sprintf("User positions not deleted"));
-          }
+      catch(Exception $e){
+          error_log(sprintf("Error during deleting user positions: %s", addslashes($e->getMessage())), 0);
+          return $this->sendStateResponse(false, 500, sprintf("User positions not deleted"));
       }
       return $this->sendStateResponse(true);
   }
@@ -166,25 +176,31 @@ class GraphController extends ControllerBase {
   */
   public function getUserParametersAction(){
     $this->view->setRenderLevel(View::LEVEL_NO_RENDER);
-    $identity = $this->auth->getIdentity();
-    if(!$identity){
-        return $this->sendJsonResponse($this->getParamsResponseJson(false, false));
+    try {
+      $identity = $this->auth->getIdentity();
+      if(!$identity){
+          return $this->sendJsonResponse($this->getParamsResponseJson(false, false));
+      }
+      $uid = $this->auth->getUserId();
+      $user = (object)Users::findById($uid);
+      $params = property_exists($user, "params") ? $user->params : array();
+      if($user == false){
+          return $this->sendJsonResponse($this->getParamsResponseJson(false, false));
+      }
+      $u_nodes = (object)UserNodes::findFirst(array(
+          array(
+              "userId" => $uid
+          )
+      ));
+      if(!$u_nodes || !property_exists($u_nodes, "positions")){
+          return $this->sendJsonResponse($this->getParamsResponseJson(true, false));
+      }
+      return $this->sendJsonResponse($this->getParamsResponseJson(true, true, $params));
     }
-    $uid = $this->auth->getUserId();
-    $user = (object)Users::findById($uid);
-    $params = property_exists($user, "params") ? $user->params : array();
-    if($user == false){
-        return $this->sendJsonResponse($this->getParamsResponseJson(false, false));
+    catch (Exception $e){
+        error_log(sprintf("Error during fetching user parameters: %s", addslashes($e->getMessage())), 0);
+        return $this->sendJsonResponse($this->getParamsResponseJson(true, false, null, true, addslashes($e->getMessage())));
     }
-    $u_nodes = (object)UserNodes::findFirst(array(
-        array(
-            "userId" => $uid
-        )
-    ));
-    if(!$u_nodes || !property_exists($u_nodes, "positions")){
-        return $this->sendJsonResponse($this->getParamsResponseJson(true, false));
-    }
-    return $this->sendJsonResponse($this->getParamsResponseJson(true, true, $params));
   }
 
 
@@ -198,32 +214,38 @@ class GraphController extends ControllerBase {
       if(!$identity){
         return $this->response->setStatusCode(417, "User is not logged in");
       }
-      $uid = $this->auth->getUserId();
-      $m_now = new \MongoDate(time());
-      $user = Users::findById($uid);
-      if($user == false){
-        return $this->response->setStatusCode(403, "User not found");
+      try {
+        $uid = $this->auth->getUserId();
+        $m_now = new \MongoDate(time());
+        $user = Users::findById($uid);
+        if($user == false){
+          return $this->response->setStatusCode(403, "User not found");
+        }
+        $u_nodes = UserNodes::findFirst(array(
+          array(
+              "userId" => $uid
+            )
+        ));
+        if( $u_nodes == false ){
+            $u_nodes = new UserNodes();
+            $u_nodes->userId = $uid;
+        }
+        $u_nodes->lastModified = $m_now;
+        $rawBody = $this->request->getJsonRawBody(true);
+        foreach ($rawBody as $pos) {
+            $node_id = (int) $pos['id'];
+            $position = new NodePosition();
+            $position->x = (float)$pos['x'];
+            $position->y = (float)$pos['y'];
+            $position->node_id = $node_id;
+            $u_nodes->positions[$node_id] = $position;
+        }
+        if($u_nodes->save() == false){
+            return $this->sendStateResponse(false, 500, "MongoDB save failure");
+        }
       }
-      $u_nodes = UserNodes::findFirst(array(
-        array(
-            "userId" => $uid
-          )
-      ));
-      if( $u_nodes == false ){
-          $u_nodes = new UserNodes();
-          $u_nodes->userId = $uid;
-      }
-      $u_nodes->lastModified = $m_now;
-      $rawBody = $this->request->getJsonRawBody(true);
-      foreach ($rawBody as $pos) {
-          $node_id = (int) $pos['id'];
-          $position = new NodePosition();
-          $position->x = (float)$pos['x'];
-          $position->y = (float)$pos['y'];
-          $position->node_id = $node_id;
-          $u_nodes->positions[$node_id] = $position;
-      }
-      if($u_nodes->save() == false){
+      catch(Exception $e){
+          error_log(sprintf("Error during saving nodes positions: %s", addslashes($e->getMessage())), 0);
           return $this->sendStateResponse(false, 500, "MongoDB save failure");
       }
       return $this->sendStateResponse(true);

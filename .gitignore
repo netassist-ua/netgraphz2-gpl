@@ -64,3 +64,7 @@ backend/stamp-h1
 
 # Thrift
 /thrift/gen-*/
+
+#LibreOffice
+.~lock.*
+

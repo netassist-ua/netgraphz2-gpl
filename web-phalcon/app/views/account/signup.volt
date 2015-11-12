@@ -63,10 +63,11 @@
 					Software distributes under GNU General Public Licence v2
 				</p>
 				<p>
-					Should there be an error in the description or pricing of a product, we will provide you with a full refund (Paragraph 13.5.6)
+					NetGraphz2 is network monitoring project. It doesn't not collect any of your personal data: all information stored
+          in application database.
 				</p>
 				<p>
-					Acceptance of an order by us is dependent on our suppliers ability to provide the product. (Paragraph 13.5.6)
+				  Software doesn't send any of your data to other servers except deployed instance. 
 				</p>
         {{ form.render('Register') }}
 			</div>

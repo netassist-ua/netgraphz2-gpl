@@ -22,5 +22,5 @@ func NewIcingaLiveStatusService(IcingaLiveStatusConfig config) *icingaStatusServ
 }
 
 func (self * IcingaLiveStatusConfig) GetHostsStateByName( host_names []string ) []HostState {
-
+    
 }

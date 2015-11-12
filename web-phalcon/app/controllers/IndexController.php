@@ -23,8 +23,7 @@ class IndexController extends ControllerBase
 
     public function indexAction()
     {
-        $this->view->node_count = $this->_nodesRepo->CountAllNodes();
-        $this->view->link_count = ceil($this->_linksRepo->CountAllLinks() / 2);
+        
     }
 
 }
