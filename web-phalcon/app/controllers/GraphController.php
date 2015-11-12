@@ -97,7 +97,7 @@ class GraphController extends ControllerBase {
         $uid = $this->auth->getUserId();
         $u_nodes = UserNodes::findFirst(array(
           array(
-              "userId" => $uid
+              "uid" => $uid
           )
         ));
         if($u_nodes == null){
@@ -154,7 +154,7 @@ class GraphController extends ControllerBase {
         }
         $u_nodes = UserNodes::findFirst(array(
             array(
-                "userId" => $uid
+                "uid" => $uid
             )
         ));
         if($u_nodes != false){
@@ -189,7 +189,7 @@ class GraphController extends ControllerBase {
       }
       $u_nodes = (object)UserNodes::findFirst(array(
           array(
-              "userId" => $uid
+              "uid" => $uid
           )
       ));
       if(!$u_nodes || !property_exists($u_nodes, "positions")){
@@ -223,12 +223,12 @@ class GraphController extends ControllerBase {
         }
         $u_nodes = UserNodes::findFirst(array(
           array(
-              "userId" => $uid
+              "uid" => $uid
             )
         ));
         if( $u_nodes == false ){
             $u_nodes = new UserNodes();
-            $u_nodes->userId = $uid;
+            $u_nodes->uid = $uid;
         }
         $u_nodes->lastModified = $m_now;
         $rawBody = $this->request->getJsonRawBody(true);
@@ -241,7 +241,7 @@ class GraphController extends ControllerBase {
             $u_nodes->positions[$node_id] = $position;
         }
         if($u_nodes->save() == false){
-            return $this->sendStateResponse(false, 500, "MongoDB save failure");
+          return $this->sendStateResponse(false, 500, "MongoDB save failure");
         }
       }
       catch(Exception $e){

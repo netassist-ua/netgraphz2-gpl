@@ -17,7 +17,7 @@ class UserNodes extends Collection {
     /**
     *   @var \MongoId User identifier
     */
-    public $userId;
+    public $uid;
 
     /**
     *   @var \NetAssist\Models\NodePosition[] User node positions
@@ -28,7 +28,7 @@ class UserNodes extends Collection {
 
     public function beforeSave()
     {
-      if(strlen($this->userId) == 0)
+      if(isset($this->uid) == 0)
         return false;
     }
 

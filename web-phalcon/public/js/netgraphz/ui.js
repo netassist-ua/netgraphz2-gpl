@@ -65,6 +65,7 @@ netgraphz.ui = (function(store, settings, renderer, eventBus, fetcher, $){
 									console.error("[Positions] Received code: %d", code);
 								}
 								console.log("Positions save success");
+								alert("Positions saved successfully");
 							},
 							error: function(jqXHR, text, errorThrown){
 								var code = jqXHR.statusCode();
@@ -91,6 +92,7 @@ netgraphz.ui = (function(store, settings, renderer, eventBus, fetcher, $){
 								console.error("[Positions] Received code: %d", code);
 							}
 							console.log("Positions delete success");
+							alert("Positions cleared successfully");
 						},
 						error: function(jqXHR, text, errorThrown){
 							var code = jqXHR.statusCode();
