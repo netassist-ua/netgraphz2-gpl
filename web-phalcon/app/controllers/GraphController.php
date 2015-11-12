@@ -143,13 +143,13 @@ class GraphController extends ControllerBase {
   public function deletePositionsAction(){
       $this->view->setRenderLevel(View::LEVEL_NO_RENDER);
       $identity = $this->auth->getIdentity();
-      if(!$identity){
+      if($identity == false){
           return $this->sendStateResponse(false, 417, "Not logged in");
       }
       try {
         $uid = $this->auth->getUserId();
         $user = Users::findById($uid);
-        if($user != false){
+        if($user == false){
             return $this->sendStateResponse(false, 417, "Not logged in");
         }
         $u_nodes = UserNodes::findFirst(array(
