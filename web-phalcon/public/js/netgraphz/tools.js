@@ -5,6 +5,8 @@ netgraphz.tools = (function(){
 
   module.extend = function (a, b, deep_extend) {
     var c = {}
+    if( typeof b == "undefined" )
+	    return a;
     if(typeof deep_extend === "undefined"){
       deep_extend = false;
     }

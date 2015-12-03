@@ -2,29 +2,41 @@ var netgraphz = netgraphz || {};
 netgraphz.fetcher = (function(ng){
 	var module = { };
 
-	var _fetch_json_get = function(url, data, callback){
-		$.ajax({
-			url: url,
-			contentType: 'application/json',
-			dataType: "json",
-			type: "GET",
-			data: data,
-			success: function( data, text, jqXHR ){
-				var code = jqXHR.status;
-				if(code >= 200 && code < 300){
-					console.log("[FETCHER] Response received, HTTP code: %s", code);
+	var _fetch_json = function( url, method, data, callback ){
+		var xhr = new XMLHttpRequest();
+	       	xhr.onreadystatechange = function(){ 
+			if(xhr.readyState == 4){
+				if(xhr.response == null) {
+					console.error("[FETCHER] Received code: %d. Empty response.", xhr.status);	
+					callback(null, xhr.status, xhr.statusText);
+					return;
+				}
+				if(xhr.status >= 200 && xhr.status < 300){
+					console.log("[FETCHER] Response received, HTTP code: %s", xhr.status);
 				}
 				else {
-					console.error("[FETCHER] Received code: %d", code);
+					console.error("[FETCHER] Received code: %d", xhr.status);
 				}
-				callback(data, code, null);
-			},
-			error: function(jqXHR, text, errorThrown){
-				var code = jqXHR.statusCode();
-				console.error("[FETCHER] Error in AJAX: %s, code: %s", text, code);
-				callback(data, code, code.statusText);
-			}
-		});
+				callback(xhr.response, xhr.status, null);
+			}			
+		};
+		xhr.onerror = function(){	
+			console.error("[FETCHER] Error in AJAX: %s, code: %s", xhr.statusText, xhr.status);
+			callback(xhr.response, xhr.status, xhr.statusText);
+		};
+		xhr.responseType = "json";
+		xhr.overrideMimeType("application/json");
+		xhr.open(method, url, true); //async json get request
+		xhr.setRequestHeader('Content-Type', 'application/json');
+		xhr.send(data);	
+	};
+
+	var _fetch_json_delete = function(url, data, callback) {
+		_fetch_json(url, "DELETE", data, callback);
+	};
+
+	var _fetch_json_get = function(url, data, callback){
+		_fetch_json(url, "GET", data, callback);
 	};
 
 	module.fetchStatus = function(callback){
@@ -35,7 +47,7 @@ netgraphz.fetcher = (function(ng){
 			_fetch_json_get("/Graph/userParams", {}, callback);
 	};
 
-  module.fetchAllNodes = function(callback){
+	module.fetchAllNodes = function(callback){
 		_fetch_json_get("/Graph/fetchAllNodes", {}, callback);
 	};
 

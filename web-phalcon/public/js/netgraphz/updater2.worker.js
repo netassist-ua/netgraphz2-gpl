@@ -1,4 +1,4 @@
-(function(undefined){
+(function(ng){
     var _root = this;
     var defaults = {
       'updateInterval': 30000, //Interval to start fetching new nodes data (30 sec by default)
@@ -15,24 +15,25 @@
     var _rotation_start_time = 0;
     var _rotation_end_time = 0;
 
+    var config = ng.tools.extend(defaults, settings);
+
     var module = {};
     var lastId = 0; //not started yet
 
-
+    
     var updater = function(){
-        
+      	_global_timer = setTimeout(config.updateInterval);
+			
     };
 
 
     if(inWebWorker){
-        //load NetGraphz2 modules...
+		
+    	    //load NetGraphz2 modules...
     }
     else {
-
-
     }
 
-
-
-
-})
+    netgraphz.updater2.worker = this;
+    updater();
+})(netgraphz);

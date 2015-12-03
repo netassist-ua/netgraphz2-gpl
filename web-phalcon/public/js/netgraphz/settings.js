@@ -15,8 +15,8 @@ netgraphz.settings = (function(){
     },
     'renderer': {
       'container_id': 'mynet', //container id
-      'layout_time': 5500, //stop after this time
-      'initialRadius': 200, //radius for initial circle
+      'layout_time': 6500, //stop after this time
+      'initialRadius': 100, //radius for initial circle
       'doubleTapTime': 400, //400 ms
       'zoomNodeLevel': 1.75, //zoom level on node selection
       'animationTime': 1000, //animation time during navigation
@@ -42,10 +42,10 @@ netgraphz.settings = (function(){
         'adjustSizes': true,
         'spreadAfterStop': true,
         'edgeWeightInfluence': 0,
-        'scalingRatio': 2.8,
+        'scalingRatio': 3.0,
         'strongGravityMode': false,
-        'gravity': 1,
-        'slowDown': 0.1,
+        'gravity': 0.95,
+        'slowDown': 0.2,
         'infinite': true
       }
     },

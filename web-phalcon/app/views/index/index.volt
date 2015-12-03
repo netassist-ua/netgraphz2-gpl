@@ -11,6 +11,8 @@
 {{ javascriptInclude("js/netgraphz/tools.js") }}
 {{ javascriptInclude("js/netgraphz/eventbus.js") }}
 {{ javascriptInclude("js/netgraphz/store.js") }}
+{{ javascriptInclude("js/netgraphz/updater2.visor.js") }}
+{{ javascriptInclude("js/netgraphz/updater2.worker.js") }}
 {{ javascriptInclude("js/netgraphz/updater.js") }}
 {{ javascriptInclude("js/netgraphz/renderer.js") }}
 {{ javascriptInclude("js/netgraphz/ui.js") }}
@@ -34,12 +36,14 @@
         <button id="pos_save" type="button" class="btn btn-default">Save positions</button>
         <button id="pos_clear" type="button" class="btn btn-default">Clear positions</button>
         {% endif %}
-        <label class="checkbox-inline"><input type="checkbox" id="graph_follownodes" value="">Follow problematic nodes</label>
+        <label class="checkbox-inline"><input type="checkbox" id="graph_follownodes" value="">Follow problems</label>
+	<label class="checkbox-inline"><input type="checkbox" id="mute_sound" value="">Mute sound</label>
       </div>
       <div class="toolstrip-right">
         <span class="label label-primary">Node search by name: </span>
         <input type="text" id="node-name-search">
       </div>
+      <div style="clear: both"></div>
     </div>
 </div>
 {% endblock %}

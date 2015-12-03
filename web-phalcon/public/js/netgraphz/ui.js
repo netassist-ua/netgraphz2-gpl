@@ -5,6 +5,7 @@ netgraphz.ui = (function(store, settings, renderer, eventBus, fetcher, $){
 	var _publisher = eventBus.registerPublisher("ui");
 	var exports = {};
 	var $cbFollow;
+	var $cbMute;
 
 
 	var dispatch_node_event = function(topic, e, retopic){
@@ -34,13 +35,19 @@ netgraphz.ui = (function(store, settings, renderer, eventBus, fetcher, $){
 			dispatch_node_event(topic, e, "node_mouseout");
 		});
 		$(function(){
+			$(window).keyup(function(e){
+					_publisher.emitSync("window_keyup", {
+						domEvent: e,
+						time: new Date()
+					});
+			});
 			$("#"+settings.loading_bar_id).hide();
 			$(window).resize(function(e){
 					_publisher.emitSync("window_resize", {
 						domEvent: e,
 						time: new Date()
 					});
-			})
+			});
 			$(window).keydown(function(e){
 					_publisher.emitSync("window_keydown", {
 						domEvent: e,
@@ -48,6 +55,7 @@ netgraphz.ui = (function(store, settings, renderer, eventBus, fetcher, $){
 					});
 			});
 			$cbFollow = $("#"+settings.followProblemNodesCheckboxId);
+			$cbMute = $("#mute_sound");
 			$("#"+settings.positionSaveButtonId).click(function(e){
 					e.preventDefault();
 					var pos = renderer.getDefaultRenderer().dumpNodesPositions();
@@ -124,6 +132,10 @@ netgraphz.ui = (function(store, settings, renderer, eventBus, fetcher, $){
 	exports.isFollowEnabled = function(){
 			return $cbFollow.is(":checked");
 	};
+
+	exports.isSoundMuted = function(){
+			return $cbMute.is(":checked");
+	}
 
 	exports.select_node = function(id){
 			var node = store.getDefaultStorage().getNodeById(id);

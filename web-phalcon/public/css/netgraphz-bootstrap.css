@@ -15,7 +15,7 @@ header.navbar {
 	padding: 0 40px 0 40px;
 }
 .toolstrip {
-	height: 35px;
+	height: auto;
 }
 
 .toolstrip-left {

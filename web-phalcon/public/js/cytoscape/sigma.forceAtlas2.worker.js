@@ -164,7 +164,6 @@
         var xDist = W.nodeMatrix[np(n1, 'x')] - W.nodeMatrix[np(n2, 'x')];
         var yDist = W.nodeMatrix[np(n1, 'y')] - W.nodeMatrix[np(n2, 'y')];
         var distance = Math.sqrt((xDist * xDist) + (yDist * yDist));
-        console.debug(distance);
         if( distance <  30 ){
           var m1 = W.nodeMatrix[np(n1, 'mass')] - 1;
           var m2 = W.nodeMatrix[np(n2, 'mass')] - 1;
@@ -202,7 +201,6 @@
           n_spread++
         }
       }
-      console.debug("nSpread: %s", n_spread);
     }
 
     /**

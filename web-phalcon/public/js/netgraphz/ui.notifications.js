@@ -33,6 +33,17 @@ netgraphz.ui.notifications = (function(ui, tools, toastr, notify){
     }
   };
 
+  var playSound = function( snd_id ){
+	if(!ui.isSoundMuted()){
+		if( snd_id in sounds ){
+			sounds[snd_id].play();	
+		}
+		else {
+			console.error("[UI.Notifications, BUG] Sound %s not found", snd_id)
+		}
+	}
+  };
+
 
   var sounds = {};
   var snd = Object.freeze({
@@ -94,7 +105,7 @@ netgraphz.ui.notifications = (function(ui, tools, toastr, notify){
   };
 
   module.sendError = function(title, text){
-    sounds[snd.SND_ERROR].play();
+    playSound(snd.SND_ERROR);	  
     if(use_desktop){
       notify.createNotification(title, {
           body: text,
@@ -107,8 +118,8 @@ netgraphz.ui.notifications = (function(ui, tools, toastr, notify){
   };
 
   module.sendSuccess = function(title, text){
-    sounds[snd.SND_OK].play();
-    if(use_desktop){
+      playSound(snd.SND_OK);
+      if(use_desktop){
       notify.createNotification(title, {
           body: text,
           icon: "/ico/icinga.png"
@@ -120,7 +131,7 @@ netgraphz.ui.notifications = (function(ui, tools, toastr, notify){
   };
 
   module.sendWarning = function(title, text){
-      sounds[snd.SND_WARNING].play();
+      playSound(snd.SND_WARNING);
       if(use_desktop){
         notify.createNotification(title, {
             body: text,
@@ -133,7 +144,7 @@ netgraphz.ui.notifications = (function(ui, tools, toastr, notify){
   };
 
   module.send = function(title, text){
-    sounds[snd.SND_INFO].play();
+    playSound(snd.SND_INFO);
     if(use_desktop){
       notify.createNotification(title, {
         body: text,

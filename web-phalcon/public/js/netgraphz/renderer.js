@@ -55,6 +55,14 @@ netgraphz.renderer = (function(store, eventBus, tools){
 		};
 
 		var attach_events = function () {
+			eventBus.subscribe("ui", "window_keydown", function(topic, e){
+				if(e.domEvent.keyCode == 17)
+					cy.boxSelectionEnabled(true);
+			});
+			eventBus.subscribe("ui", "window_keyup", function(topic, e){
+				if(e.domEvent.keyCode == 17)
+					cy.boxSelectionEnabled(false);
+			});
 			cy.$('node').on('tap', function(e){
 				if(_double_tap_target != undefined && _double_tap_target == e.cyTarget)
 				{
@@ -73,9 +81,8 @@ netgraphz.renderer = (function(store, eventBus, tools){
 					console.log(e.cyTarget.id());
 			});
 			cy.nodes().on('select', function(e){
-				console.debug(e.cyTarget.id());
 				if(typeof _cy_selected !== "undefined"){
-					_cy_selected.unselect(); //bug override
+					//_cy_selected.unselect(); //bug override
 				}
 				_cy_selected = e.cyTarget;
 				publisher.emit("node_select", {
@@ -91,6 +98,7 @@ netgraphz.renderer = (function(store, eventBus, tools){
 							ttl: 4
 					});
 			});
+				
 			cy.$('node').on('mouseover', function(e){
 				publisher.emit("node_mouseover", {
 						cyEvent: e,
@@ -261,17 +269,17 @@ netgraphz.renderer = (function(store, eventBus, tools){
 						style: {
 							//'background-color': 'red',
 							'content': 'data(name)',
-							'width': '8px',
-							'height': '8px',
+							'width': '10px',
+							'height': '10px',
 							'font-size': '5px',
-							'min-zoomed-font-size': '4px'
+							//'min-zoomed-font-size': '4px'
 						}
 					},
 					{
 						'selector': 'edge',
 						'style': {
-							'curve-style': 'rectangle',
-							'width': '2px',
+							'curve-style': 'segments',
+							'width': '4px',
 						}
 					},
 					{
