@@ -17,14 +17,15 @@ netgraphz.fetcher = (function(ng){
 				else {
 					console.error("[FETCHER] Received code: %d", xhr.status);
 				}
-				callback(xhr.response, xhr.status, null);
+				callback(JSON.parse(xhr.response), xhr.status, null);
+				//callback(xhr.response, xhr.status, null);
 			}			
 		};
 		xhr.onerror = function(){	
 			console.error("[FETCHER] Error in AJAX: %s, code: %s", xhr.statusText, xhr.status);
 			callback(xhr.response, xhr.status, xhr.statusText);
 		};
-		xhr.responseType = "json";
+		//xhr.responseType = "json";
 		xhr.overrideMimeType("application/json");
 		xhr.open(method, url, true); //async json get request
 		xhr.setRequestHeader('Content-Type', 'application/json');

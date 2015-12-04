@@ -11,6 +11,7 @@ netgraphz.renderer = (function(store, eventBus, tools){
 		var _this = this;
 		var _double_tap_timer;
 		var _double_tap_target;
+		var _SHIFT_HOLD = false;
 
 		var _cy_selected;
 		var show_node_id; //currently visible node information (contains pure id - int)
@@ -55,13 +56,34 @@ netgraphz.renderer = (function(store, eventBus, tools){
 		};
 
 		var attach_events = function () {
+			document.addEventListener('visibilitychange', function(){
+				cy.boxSelectionEnabled(false); //drop selection
+				_SHIFT_HOLD = false;
+			});
+
 			eventBus.subscribe("ui", "window_keydown", function(topic, e){
-				if(e.domEvent.keyCode == 17)
-					cy.boxSelectionEnabled(true);
+				switch(e.domEvent.keyCode){
+					case 17:
+					cy.boxSelectionEnabled(true);	
+					break;
+					case 16:
+					_SHIFT_HOLD = true;
+					break;
+					default:
+					return;
+				}
 			});
 			eventBus.subscribe("ui", "window_keyup", function(topic, e){
-				if(e.domEvent.keyCode == 17)
-					cy.boxSelectionEnabled(false);
+				switch(e.domEvent.keyCode){
+					case 17:
+					cy.boxSelectionEnabled(false);	
+					break;
+					case 16:
+					_SHIFT_HOLD = false;
+					break;
+					default:
+					return;
+				}
 			});
 			cy.$('node').on('tap', function(e){
 				if(_double_tap_target != undefined && _double_tap_target == e.cyTarget)
@@ -78,7 +100,12 @@ netgraphz.renderer = (function(store, eventBus, tools){
 				return false;
 			});
 			cy.edges().on('select', function(e){
-					console.log(e.cyTarget.id());
+
+			});
+			cy.nodes().on('unselect', function(e){
+				if(_SHIFT_HOLD && cy.boxSelectionEnabled()){
+					e.cyTarget.select();	
+				}
 			});
 			cy.nodes().on('select', function(e){
 				if(typeof _cy_selected !== "undefined"){

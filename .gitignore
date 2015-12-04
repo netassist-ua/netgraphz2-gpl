@@ -67,4 +67,5 @@ backend/stamp-h1
 
 #LibreOffice
 .~lock.*
-
+#VI
+.*.sw?
