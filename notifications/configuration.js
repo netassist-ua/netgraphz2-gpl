@@ -1,4 +1,6 @@
 var nconf = require("nconf");
+var path = require("path");
+
 var _conf = {};
 var _defaults = {
   'notificator': {
@@ -19,7 +21,8 @@ var _defaults = {
     'listenAll': false,
     'port': 3434,
     "aggregation": {
-	"time": 100,
+	"enabled": false,
+	"time": 100
     },
     "rateLimit": {
 	"rate": 10,
@@ -35,7 +38,8 @@ var _defaults = {
 
 module.exports = {
   init: function(){
-    nconf.file({file: 'config.json'});
+
+    nconf.file({file: path.resolve(__dirname, 'config.json')});
     nconf.argv().env();
     nconf.defaults(_defaults);
     _conf = {
@@ -44,6 +48,7 @@ module.exports = {
       api: nconf.get('api')
     };
   },
+
   getConfiguration: function(){
       return _conf;
   }
