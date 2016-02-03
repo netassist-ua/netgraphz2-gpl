@@ -3,7 +3,7 @@ package ng_state
 import (
 	"errors"
 	"fmt"
-	livestatus "github.com/vbatoufflet/go-livestatus"
+	livestatus "github.com/netassist-ua/go-livestatus"
 	"net"
 	"regexp"
 	"strconv"

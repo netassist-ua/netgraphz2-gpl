@@ -2,7 +2,7 @@ package ng_state
 
 import (
 	"fmt"
-	livestatus "github.com/vbatoufflet/go-livestatus"
+	livestatus "github.com/netassist-ua/go-livestatus"
 	"time"
 )
 
