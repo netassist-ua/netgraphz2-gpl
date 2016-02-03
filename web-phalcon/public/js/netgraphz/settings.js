@@ -78,8 +78,8 @@ netgraphz.settings = (function(){
         ]
       },
       'link_panel': {
-	'node_panel_id': 'link_panel', //id of node panel
-        'node_panel_close_button_id': 'link_panel_close', //close button element Id
+	'link_panel_id': 'link_panel', //id of node panel
+        'link_panel_close_button_id': 'link_panel_close', //close button element Id
         'fadeTime': 400, //time to fade out node panel, ms
         'holdTime': 2400, //time to hold panel on screen, ms
       },
