@@ -4,7 +4,7 @@ After=network.target
 Wants=icinga2.service
 
 [Service]
-ExecStart=/usr/bin/nodejs /opt/netgraphz2/notifications/app.js
+ExecStart=/usr/bin/nodejs /opt/netgraphz2-gpl/notifications/app.js
 Restart=always
 StandardOutput=syslog
 StandardError=syslog
@@ -12,7 +12,7 @@ SyslogIdentifier=netgraphz2-notifications
 User=netgraphz2
 Group=daemon
 Environment=NODE_ENV=production
-WorkingDirectory=/opt/netgraphz2/notifications
+WorkingDirectory=/opt/netgraphz2-gpl/notifications
 
 [Install]
 WantedBy=multi-user.target

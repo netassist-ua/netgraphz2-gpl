@@ -1,10 +1,10 @@
 package ng_metric
 
 import (
-	uuid "code.google.com/p/go-uuid/uuid"
 	ring "container/ring"
 	"errors"
 	"fmt"
+	uuid "github.com/pborman/uuid"
 	"log"
 	"sync"
 	"time"
