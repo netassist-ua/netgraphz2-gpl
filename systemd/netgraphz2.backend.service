@@ -1,0 +1,18 @@
+[Unit]
+Description=NetGraphz2 backend server
+After=network.target
+
+[Service]
+ExecStart=/opt/netgraphz2-gpl/backend/bin/ng_backend --config /opt/netgraphz2-gpl/backend/bin/config.json --pid /var/run/netgraphz2/ng_backend.pid
+Restart=always
+StandardOutput=syslog
+StandardError=syslog
+SyslogIdentifier=netgraphz2-backend
+User=netgraphz2
+Type=forking
+PIDFile=/var/run/netgraphz2/ng_backend.pid
+Group=daemon
+WorkingDirectory=/opt/netgraphz2-gpl/backend/bin
+
+[Install]
+WantedBy=multi-user.target

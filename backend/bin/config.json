@@ -1,6 +1,6 @@
 {
 	"daemon": {
-		"log_file": "/var/log/ng_backend.log",
+		"log_file": "/var/log/netgraphz2/ng_backend.log",
 		"rpc_port": 8088
 	},
 	"ng_state": {
