@@ -18,7 +18,6 @@ use Phalcon\Flash\Direct as Flash;
 
 use Phalcon\Session\Adapter\Files as SessionAdapter;
 use NetAssist\Graph\ConnectionBuilder as GraphConnectionBuilder;
-use NetAssist\Icinga\LiveStatus\Config as LiveStatusConfig;
 use NetAssist\Shared\Auth as Auth;
 
 /**
@@ -57,8 +56,11 @@ $di->setShared('view', function () use ($config) {
       $volt->setOptions(array(
         'compiledPath' => $config->application->cacheDir,
         'compiledSeparator' => '_'
-      ));
+       ));
 
+      $volt->getCompiler()->addFunction('include_raw', function($resolvedArgs, $exprArgs) use ($view) {
+	           return sprintf('file_get_contents("%s" . %s)', $view->getViewsDir(), $resolvedArgs);
+      });
       return $volt;
     },
     '.phtml' => 'Phalcon\Mvc\View\Engine\Php'
@@ -85,26 +87,33 @@ $di->set('flash', function () {
 *   Inject graph connection, repositories, etc
 */
 
-$di->set('graphDbConnection', function() use ($config){
-  return (new GraphConnectionBuilder($config->graph))->buildConnection();
+/* gRPC configuration */
+
+$di->set('grpcConfig', function() use ($config){
+  $cfg = new \NetAssist\GRPC\Config();
+  $cfg->host = $config->grpc->host;
+  $cfg->port = $config->grpc->port;
+  $cfg->timeout = $config->grpc->timeout;
+  $cfg->grpcOptions = get_object_vars($config->grpc->options);
+  return $cfg;
 });
 
 $di->set('graphDbAdapter', function(){
-  return (new \NetAssist\Graph\Adapters\NeoClientAdapter());
+	  return (new \NetAssist\Graph\Adapters\RPCAdapter());
 });
 
 $di->set('graphNodesRepository', array(
-  'className' => 'NetAssist\Graph\Repositories\NeoClient\NodesRepository',
+  'className' => 'NetAssist\Graph\Repositories\GRPC\NodesRepository',
   'arguments' => array(
-    array( 'type' => 'service', 'name' => 'graphDbConnection'),
+    array( 'type' => 'service', 'name' => 'grpcConfig'),
     array( 'type' => 'service', 'name' => 'graphDbAdapter')
   )
 ));
 
 $di->set('graphLinksRepository', array(
-  'className' => 'NetAssist\Graph\Repositories\NeoClient\LinksRepository',
+  'className' => 'NetAssist\Graph\Repositories\GRPC\LinksRepository',
   'arguments' => array(
-    array( 'type' => 'service', 'name' => 'graphDbConnection' ),
+    array( 'type' => 'service', 'name' => 'grpcConfig' ),
     array( 'type' => 'service', 'name' => 'graphDbAdapter')
   )
 ));
@@ -123,33 +132,7 @@ $di->set('collectionManager', function(){
     return new Phalcon\Mvc\Collection\Manager();
 }, true);
 
-/* LiveStatus host status service */
 
-$di->set('icingaLiveStatusConfig', function() use ($config){
-  $cfg = new LiveStatusConfig();
-  $cfg->host = $config->livestatus->host;
-  $cfg->port = $config->livestatus->port;
-  $cfg->keepAlive = $config->livestatus->keepAlive;
-  $cfg->use_unix_socket = $config->livestatus->unixSocket;
-  $cfg->unix_socket_path = $config->livestatus->unixSocketPath;
-  $cfg->use_auth = $config->livestatus->authEnable;
-  $cfg->auth_user = $config->livestatus->authUser;
-  return $cfg;
-});
-
-$di->set('icingaLiveStatusClient', array(
-  'className' => 'NetAssist\Icinga\LiveStatus\Client',
-  'arguments' => array(
-    array('type' => 'service', 'name'=>'icingaLiveStatusConfig')
-  )
-));
-
-$di->set('hostStatusService', array(
-  'className' => 'NetAssist\Icinga\LiveStatus\IcingaHostStatusService',
-  'arguments' => array(
-    array('type' => 'service', 'name'=>'icingaLiveStatusClient')
-  )
-));
 
 
 /**

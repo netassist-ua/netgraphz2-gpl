@@ -16,6 +16,16 @@
     "authTokensPath": "auth_tokens.json",
     "listenAll": false,
     "port": 3434,
+    "aggregation": {
+	"enabled": true,
+	"time": 1000 
+    },
+    "rateLimit": {
+	"enabled": true,
+	"time": 1000,
+	"rate": 10,
+	"overrate": "queue"
+    },
     "address": "127.0.0.1",
     "icinga": {
       "broadcast_user": "_netgraphz2_notify_all"

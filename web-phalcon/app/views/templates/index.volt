@@ -15,6 +15,7 @@
   {{ javascriptInclude("js/mediator.min.js") }}
   {{ javascriptInclude("js/jquery.min.js") }}
   {{ javascriptInclude("js/jquery-ui/jquery-ui.min.js") }}
+  {{ javascriptInclude("js/jsrender.min.js") }}
   {{ javascriptInclude("js/bootstrap.min.js") }}
   {{ javascriptInclude("js/socket.io.js") }}
   {{ javascriptInclude("js/desktop-notify-min.js") }}

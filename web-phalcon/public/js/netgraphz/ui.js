@@ -6,8 +6,19 @@ netgraphz.ui = (function(store, settings, renderer, eventBus, fetcher, $){
 	var exports = {};
 	var $cbFollow;
 	var $cbMute;
+	var $btnLayoutStart;
+	var $btnLayoutStop;
+	var $btnResetZoom;
+	var $btnPositionSave;
+	var $btnPositionReset;
 
 
+	/*
+	 * Handle node UI event in default handling way
+	 * @param {string} topic - Event topic
+	 * @param {object} e - Event object
+	 * @param {string} retopic - Resending topic
+	 */
 	var dispatch_node_event = function(topic, e, retopic){
 		var regex = new RegExp("n([0-9]+)");
 		var matches = regex.exec(e.cyEvent.cyTarget.id());
@@ -21,9 +32,22 @@ netgraphz.ui = (function(store, settings, renderer, eventBus, fetcher, $){
 			console.error("Node not found in storage, id: %s", oid);
 			return;
 		}
-		_publisher.emit(retopic, {node: node, date: new Date()});
+		_publisher.emit(retopic,
+			       	{
+					node: node, 
+					position: e.cyEvent.cyPosition,
+				       	rendererPosition: e.cyEvent.cyRenderedPosition,
+				       	date: new Date()
+				});
 	};
 
+	var dispatch_link_event = function(topic, e, retopic){
+		var regex = new RegExp("e");
+	};
+
+	/*
+	 * Attach event handlers to UI events
+	 */
 	var attach_events = function(){
 		eventBus.subscribe("renderer:default", "node_select", function(topic, e){
 			dispatch_node_event(topic, e, "node_select");
@@ -34,6 +58,13 @@ netgraphz.ui = (function(store, settings, renderer, eventBus, fetcher, $){
 		eventBus.subscribe("renderer:default", "node_mouseout", function(topic, e){
 			dispatch_node_event(topic, e, "node_mouseout");
 		});
+		eventBus.subscribe("renderer:default", "node_unselect", function(topic, e){
+			dispatch_node_event(topic, e, "node_unselect");
+		});
+		eventBus.subscribe("renderer:default", "edge_mouseover", function(topic, e){
+		});
+		eventBus.subscribe("renderer:default", "edge_mouseout", function( topic, e){
+		});
 		$(function(){
 			$(window).keyup(function(e){
 					_publisher.emitSync("window_keyup", {
@@ -41,7 +72,7 @@ netgraphz.ui = (function(store, settings, renderer, eventBus, fetcher, $){
 						time: new Date()
 					});
 			});
-			$("#"+settings.loading_bar_id).hide();
+			$("div#waiter").hide();
 			$(window).resize(function(e){
 					_publisher.emitSync("window_resize", {
 						domEvent: e,
@@ -54,9 +85,14 @@ netgraphz.ui = (function(store, settings, renderer, eventBus, fetcher, $){
 						time: new Date()
 					});
 			});
-			$cbFollow = $("#"+settings.followProblemNodesCheckboxId);
+			$cbFollow = $("#graph_follownodes");
 			$cbMute = $("#mute_sound");
-			$("#"+settings.positionSaveButtonId).click(function(e){
+			$btnLayoutStart = $("#graph_layoutstart");
+			$btnLayoutStop = $("#graph_layoutstop");
+			$btnResetZoom = $("#graph_resetzoom");
+			$btnPositionSave = $("#pos_save");
+			$btnPositionReset = $("#pos_clear");
+			$btnPositionSave.click(function(e){
 					e.preventDefault();
 					var pos = renderer.getDefaultRenderer().dumpNodesPositions();
 					$.ajax({
@@ -84,7 +120,7 @@ netgraphz.ui = (function(store, settings, renderer, eventBus, fetcher, $){
 					});
 					$(this).blur();
 			});
-			$("#"+settings.positionClearButtonId).click(function(e){
+			$btnPositionReset.click(function(e){
 					e.preventDefault();
 					$.ajax({
 						url: "/Graph/positions",
@@ -111,17 +147,17 @@ netgraphz.ui = (function(store, settings, renderer, eventBus, fetcher, $){
 					});
 					$(this).blur();
 			});
-			$('#'+settings.viewPortResetButtonId).click(function(e){
+			$btnResetZoom.click(function(e){
 					e.preventDefault();
 					renderer.getDefaultRenderer().resetZoomAndCenter();
 					$(this).blur();
 			});
-			$("#"+settings.layoutStartButtonId).click(function(e){
+			$btnLayoutStart.click(function(e){
 					e.preventDefault();
 					renderer.getDefaultRenderer().startLayout();
 					$(this).blur();
 			});
-			$("#"+settings.layoutStopButtonId).click(function(e){
+			$btnLayoutStop.click(function(e){
 					e.preventDefault();
 					renderer.getDefaultRenderer().stopLayout();
 					$(this).blur();
@@ -129,14 +165,26 @@ netgraphz.ui = (function(store, settings, renderer, eventBus, fetcher, $){
 		});
 	};
 
+	/*
+	 * Returns if automatic node follow node enabled
+	 * @return {boolean} Node follow mode status
+	 */
 	exports.isFollowEnabled = function(){
 			return $cbFollow.is(":checked");
 	};
 
+	/*
+	 * Returns status mute option
+	 * @return {boolean} Mute option status
+	 */
 	exports.isSoundMuted = function(){
 			return $cbMute.is(":checked");
 	}
 
+	/*
+	 * Selects node on graph
+	 * @param {number} id - Node identifier
+	 */
 	exports.select_node = function(id){
 			var node = store.getDefaultStorage().getNodeById(id);
 			if( typeof node === "undefined") {
@@ -150,6 +198,9 @@ netgraphz.ui = (function(store, settings, renderer, eventBus, fetcher, $){
 			});
 	};
 
+	/*
+	 * Initialize UI
+	 */
 	exports.init = function(){
 		attach_events();
 	};

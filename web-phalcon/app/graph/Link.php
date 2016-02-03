@@ -33,6 +33,12 @@ class Link implements \JsonSerializable {
   /** @var int Link speed in mbps */
   public $link_speed;
 
+  /** @var string RX Octets metric for weather map**/
+  public $rx_octets_metric;
+
+  /** @var string TX Octets metric for weather map**/
+  public $tx_octets_metric;
+
   public function __get($property){
     if($property == "id")
       return $this->_id;
@@ -58,7 +64,9 @@ class Link implements \JsonSerializable {
         'db_sw_id' => $this->dst_node->db_id,
         'port_id' => $this->dst_port,
       ],
-      'link_speed' => $this->link_speed
+      'link_speed' => $this->link_speed,
+      'rx_octets' => $this->rx_octets_metric,
+      'tx_octets' => $this->tx_octets_metric
     ];
   }
 

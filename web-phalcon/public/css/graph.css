@@ -8,6 +8,34 @@
     bottom: 10px;
 }
 
+#link_panel {
+    z-index: 25;
+    height: auto;
+    padding-bottom: 10px;
+    width: auto;
+    position: fixed;
+    right: 20px;
+    bottom: 10px;
+}
+
+#monitoring_sources {
+	margin-top: -5px;
+}
+
+#monitoring_sources >
+ div >
+ .mon_source_title {
+	font-size: 10px;
+	color: #c0c0c4;
+	margin-left: 12px;
+ }
+
+#monitoring_source >
+ div >
+ .node_time {
+	 font-size: 12px;
+ }
+
 #node_links {
     display: inline;
     margin-left: 8px;

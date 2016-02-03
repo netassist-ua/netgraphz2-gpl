@@ -173,7 +173,7 @@ window.forceAtlas2 = window.forceAtlas2 || {}
       this.nodesByteArray[j + 5] = 0;
       this.nodesByteArray[j + 6] = 1 + nodes[i].degree(false);
       this.nodesByteArray[j + 7] = 1;
-      this.nodesByteArray[j + 8] = parseInt(nodes[i].size("height")) * parseInt(nodes[i].size("width"));
+      this.nodesByteArray[j + 8] = ( 0.3 + nodes[i].degree(false) ) * nodes[i].height() * nodes[i].width();
       this.nodesByteArray[j + 9] = 0;
       j += this.ppn;
     }

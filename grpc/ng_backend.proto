@@ -1,0 +1,165 @@
+syntax = "proto2";
+package ng_rpc;
+
+service Backend {
+	rpc GetNodeById (NodeByIdRequest) returns (Node) {}
+	rpc GetAllNodes (NodesAllRequest) returns (stream Node) {}
+	rpc GetLinkById (LinkByIdRequest) returns (Link) {}
+	rpc GetAllLinks (LinksAllRequest) returns (stream Link) {}
+	rpc GetAllMetrics (AllMetricsRequest) returns (stream Metric) {}
+	rpc GetStatus (StatusRequest) returns (StatusResponse) {}
+}
+
+message AllMetricsRequest {
+	required int64 n_skip = 1;
+	required int64 n_take = 2;
+}
+
+message Metric {
+	required string name = 1;
+	enum Kind {
+		GAUGE = 1;
+		DERIVE = 2;
+		COUNTER = 3;
+		OTHER = 4;
+	} 
+	required Kind kind = 2;
+	required int64 n_records = 3;
+	required int64 time_last_record = 4;
+}
+
+message StatusRequest {
+	required int64 time = 1;
+}
+
+message StatusResponse {
+	required int32 n_nodes = 1;
+	required int32 n_links = 2;
+	required int32 n_metrics = 3;
+}
+
+
+message LinkByIdRequest {
+	required int32 link_id = 1;
+}
+
+message LinksAllRequest {
+	required int32 last_id = 1;
+	required int32 n_take = 2;
+}
+
+message NodeByIdRequest {
+	required int32 node_id	= 1;
+	required bool include_state = 2;
+	required int32 include_metrics = 3;
+}
+
+message NodesAllRequest {
+	required int32 last_id = 1;
+	required int32 n_take = 2;
+	required bool include_state = 3;
+	required int32 include_last_metrics = 4;
+}
+
+message Link {
+	required int32 id = 1;
+	required int32 start_node_id = 2;
+	required int32 end_node_id = 3;
+	optional int32 db_start_id = 4;
+	optional int32 db_end_id = 5;
+	optional int32 quality = 6;
+	optional string comment = 7;
+	optional LinkType type = 8;
+	optional string rx_octets_metric = 9;
+	optional string tx_octets_metric = 10;
+	optional int32 capacity_mbit = 11;
+	optional int32 src_sw_port = 12;
+	optional int32 dst_sw_port = 13;
+
+	enum LinkType {
+		FIBER = 0;
+		FIBER_TRANSPORT = 1;
+		COPPER = 2;
+		RADIO_WB = 3;
+		RADIO_80211_2GHZ = 4;
+		RADIO_80211_5GHZ = 5;
+		RADIO_LB = 6;
+		GSM = 7;
+		X25 = 8;
+		POWERLINE = 9;	
+	}
+}
+message MetricVal {
+	enum Kind {
+		GAUGE = 1;
+		DERIVE = 2;
+		COUNTER = 3;
+		OTHER = 4;
+	}
+	required string name = 1;
+	required string type = 2;
+	required Kind kind = 3;
+	required uint64 time = 4;
+	optional float gauge_value = 5;
+	optional int64 derive_value = 6;
+	optional fixed64 counter_value = 7; 
+	optional bytes other_value = 8;
+}
+
+message Node {
+	required int32 id = 1;
+	required string name = 2;
+	optional string address = 3;
+	optional string model = 4;
+	optional string mac_address = 5;
+	optional uint32 ip4 = 6;
+	optional bytes ip6 = 7;
+	optional string comment = 8;
+	optional int32 db_id = 9;
+	optional fixed32 num_ports = 10;
+	optional string icinga_name = 11;
+	optional string serial = 12; 
+	repeated NodeState states = 13;
+	map<string, MetricValCollection> last_metric_values = 14;
+}
+
+message MetricValCollection {
+	required string name = 2;
+	repeated MetricVal values = 1;
+}
+
+message NodeState {
+	required State state = 1;
+	required State hard_state = 2;
+	required DescState descriptive_state = 3;
+	required bool is_hard_state = 4;
+	required bool is_reachable = 5; 
+	required bool is_flapping = 6;
+	required bool is_executing = 7;
+	required float rtt = 8;
+	required float loss = 9;
+	required uint64 time = 10;
+	required string source = 11;
+	required string output = 12;
+	required int32 num_services = 13;
+	required int32 num_services_ok = 14;
+	required int32 num_services_warning = 15;
+	required int32 num_services_pending = 16;
+	required int32 num_services_critical = 17;
+	required int32 num_services_unknown = 18;
+	required string notes = 19;
+	required bool is_duplicate = 20;
+	required bool has_been_checked = 21;
+	enum State {
+		STATE_UP = 0;
+		STATE_DOWN = 1;
+		STATE_UNREACHABLE = 2;
+	}
+	enum DescState {
+		D_STATE_UP = 0;
+		D_STATE_DOWN = 1;
+		D_STATE_WARNING = 2;
+		D_STATE_UNKNOWN	= 3;
+		D_STATE_FLAPPING = 4;
+	}
+}

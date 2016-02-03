@@ -12,8 +12,6 @@ class NodesRoutes extends RouterGroup
 
         $this->addGet("/Get/{id}", "Nodes::get");
 
-        $this->addGet("/GetAll/{skip}/{take}", "Nodes::getAll");
-
         $this->addGet("/GetAllFrom/{id}/{take}", "Nodes::getAllFromId" );
     }
 }

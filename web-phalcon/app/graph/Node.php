@@ -22,6 +22,11 @@
       public $ip;
 
       /**
+       * @var string|null IPv6 address of node
+       */
+      public $ip6;
+
+      /**
       * @var string|null Hardware device model of node
       */
       public $model;
@@ -29,12 +34,12 @@
       /**
       * @var string|null Physical localtion of device
       */
-      public $addr;
+      public $address;
 
       /**
       * @var string|null MAC address of device
       */
-      public $mac;
+      public $mac_address;
 
       /**
       * @var int SQL (Alter) Database identifier
@@ -67,9 +72,14 @@
       public $icinga_name;
 
       /**
-      * @var \NetAssist\Graph\NodeStatus|null Node status
+      * @var \NetAssist\Graph\NodeStatus[] Node status
       */
       public $status;
+
+      /**
+       * @var \NetAssist\Graph\NodeMetric[]  Node metrics
+       */
+      public $metrics;
 
       /**
       * @var int Predefined x coordinate
@@ -90,19 +100,18 @@
       {
         return [
                 'id' => $this->_id,
-        				'address' => $this->addr,
+  		'address' => $this->address,
                 'db_id' => $this->db_id,
                 'name' => $this->name,
                 'ip' => $this->ip,
-                'mac' => $this->mac,
+                'mac' => $this->mac_address,
                 'model' => $this->model,
                 'comment' => $this->comment,
                 'port_number' => $this->ports_number,
-                'icinga_name' => $this->icinga_name,
-                'state'=> isset($this->status) ? $this->status->state : NodeState::STATE_UKNOWN,
-                'rtt' => isset($this->status) ? $this->status->avg_rtt_ms : null,
-                'packet_loss' => isset($this->status) ? $this->status->packet_loss : null,
-                'duplicates' => isset($this->status) ? $this->status->dup : null,
+		'icinga_name' => $this->icinga_name,
+		'status' => $this->status,
+		'metrics' => $this->metrics,
+		'ip6' => $this->ip6,
                 'x' => isset($this->x) ? $this->x : null,
                 'y' => isset($this->y) ? $this->y : null
           ];
@@ -114,7 +123,9 @@
       */
       function __construct($id) {
           $this->_id = $id;
-          $this->links = array();
+	  $this->links = array();
+	  $this->status = array();
+	  $this->metrics = array();
       }
 
       public function __isset($property) {

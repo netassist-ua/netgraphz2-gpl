@@ -29,6 +29,9 @@ backend/install-sh
 backend/missing
 backend/stamp-h1
 
+backend/bin
+backend/ng_cli
+backend/ng_backend
 
 
 .deps

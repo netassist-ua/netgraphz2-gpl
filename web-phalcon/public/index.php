@@ -1,13 +1,17 @@
 <?php
-gc_enable();
-error_reporting(E_ERROR | E_PARSE);
+#error_reporting(E_ERROR | E_PARSE);
+error_reporting(E_ALL);
 
 define('APP_PATH', realpath('..'));
 
-$debug = new \Phalcon\Debug();
-$debug->listen();
+#$debug = new \Phalcon\Debug();
+#$debug->listen();
 try {
-     require_once APP_PATH . "/vendor/autoload.php";
+    require APP_PATH . "/vendor/autoload.php";
+    /**
+    * gRPC
+    */
+    require APP_PATH . "/app/grpc/ng_backend.php";
 
     /**
      * Read the configuration
@@ -19,10 +23,12 @@ try {
      */
     include APP_PATH . "/app/config/loader.php";
 
+
     /**
      * Read services
      */
     include APP_PATH . "/app/config/services.php";
+
 
     /**
      * Handle the request

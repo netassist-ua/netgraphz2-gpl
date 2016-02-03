@@ -1,6 +1,10 @@
 var netgraphz = netgraphz || {};
 
 netgraphz.status = (function(fetcher, $){
+   var n_nodes = 0;
+   var n_lins = 0; 
+
+
   fetcher.fetchStatus(function(data, code, error){
     if(error){
       console.error("Failed to fetch status data, http code: %s", code);

@@ -18,6 +18,13 @@ var _defaults = {
     'authTokensPath': 'auth_tokens.json',
     'listenAll': false,
     'port': 3434,
+    "aggregation": {
+	"time": 100,
+    },
+    "rateLimit": {
+	"rate": 10,
+	"time": 200
+    },
     'address': '127.0.0.1',
     'icinga': {
         'broadcast_user': '_netgraphz2_notify_all'

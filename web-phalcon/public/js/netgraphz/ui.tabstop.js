@@ -1,6 +1,6 @@
 var netgraphz = netgraphz || {};
 netgraphz.ui = netgraphz.ui || {};
-netgraphz.ui.tabStop =  (function(ui, eventBus, tools, store, core, $){
+netgraphz.ui.tabStop =  (function(ui, eventBus, tools, store, core, utils, $){
   var defaults = {
     'enabled': true
   };
@@ -18,7 +18,8 @@ netgraphz.ui.tabStop =  (function(ui, eventBus, tools, store, core, $){
         if( e.id == node.id ) index = i;
         return index == -1;
     });
-    var problem = (node.state == core.node_state.STATE_NODE_DOWN || node.state == core.node_state.STATE_NODE_WARN);
+    var ef_state = utils.get_node_pref_effective_state(node);
+    var problem = (ef_state == core.node_state.STATE_NODE_DOWN || ef_state == core.node_state.STATE_NODE_WARN);
     if(problem){
         if(index == -1)
           _tab_stop_queue.push(node); //add into queue
@@ -111,4 +112,4 @@ netgraphz.ui.tabStop =  (function(ui, eventBus, tools, store, core, $){
 
   return module;
 
-})(netgraphz.ui, netgraphz.eventBus, netgraphz.tools, netgraphz.store, netgraphz.core, $);
+})(netgraphz.ui, netgraphz.eventBus, netgraphz.tools, netgraphz.store, netgraphz.core, netgraphz.utils, $);

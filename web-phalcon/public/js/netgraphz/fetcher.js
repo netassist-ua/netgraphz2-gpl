@@ -17,7 +17,10 @@ netgraphz.fetcher = (function(ng){
 				else {
 					console.error("[FETCHER] Received code: %d", xhr.status);
 				}
-				callback(JSON.parse(xhr.response), xhr.status, null);
+				if( xhr.response == "")	
+					callback({}, xhr.status, "Server retuned empty response");
+				else 
+					callback(JSON.parse(xhr.response), xhr.status, null);
 				//callback(xhr.response, xhr.status, null);
 			}			
 		};

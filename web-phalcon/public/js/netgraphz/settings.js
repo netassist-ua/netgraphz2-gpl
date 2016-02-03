@@ -6,34 +6,37 @@ var netgraphz =  netgraphz || {};
 netgraphz.settings = (function(){
   return {
     'communication': {
-      'remote_url': 'http://netgraphz.naic.29632.as:3433', //URL of notifications server
+      'remote_url': 'http://127.0.0.1:3433', //URL of notifications server
     },
     'updater': { //Updater settings
       'updateInterval': 30000, //Interval to start fetching new nodes data (30 sec by default)
       'partInterval': 1200, //Interval between parts
       'partSize': 30 //Ammount of nodes to fetch by request, should be not too big and not too small
     },
+    'default_state_source': null,
     'renderer': {
       'container_id': 'mynet', //container id
       'layout_time': 6500, //stop after this time
       'initialRadius': 100, //radius for initial circle
       'doubleTapTime': 400, //400 ms
-      'zoomNodeLevel': 1.75, //zoom level on node selection
+      'zoomNodeLevel': 2.75, //zoom level on node selection
       'animationTime': 1000, //animation time during navigation
       'autoResizeContainer': true, //automatically resize container to fill page
-      'state_palette': {
-        '-1': "#8C8B76", //unknown
-        0: "#FC766D", //down
-        1: "#86D95D", //up,
-        2: "#F0DE78" //loss
+      'effective_state_palette': {
+        0: "#86D95D", //up
+        1: "#FC766D", //down
+        2: "#F0DE78", //warning
+	3: "#CCD5ED", //unknown
+	4: "#70C5CF", //flapping
       },
+      'default_node_color': '#8C8B76',
       'layout': {
         'name': 'forceAtlas2',
         'animate': true, // whether to show the layout as it's running
         'refresh': 1, // number of ticks per frame; higher is faster but more jerky
         'ungrabifyWhileSimulating': true, // so you can't drag nodes during layout
         'fit': true, // on every layout reposition of nodes, fit the viewport
-        'maxSimulatingTime': 6000,
+        'maxSimulatingTime': 12000,
         'padding': 30, // padding around the simulation
         'boundingBox': undefined, // constrain layout bounds; { x1, y1, x2, y2 } or { x1, y1, w, h }
         'useWebWorker': true, //tries to use WebWorker to achive better performance
@@ -42,10 +45,10 @@ netgraphz.settings = (function(){
         'adjustSizes': true,
         'spreadAfterStop': true,
         'edgeWeightInfluence': 0,
-        'scalingRatio': 3.0,
+        'scalingRatio': 4.0,
         'strongGravityMode': false,
         'gravity': 0.95,
-        'slowDown': 0.2,
+        'slowDown': 0.23,
         'infinite': true
       }
     },
@@ -73,6 +76,12 @@ netgraphz.settings = (function(){
                 'popupName': "fping {ip}"
             }
         ]
+      },
+      'link_panel': {
+	'node_panel_id': 'link_panel', //id of node panel
+        'node_panel_close_button_id': 'link_panel_close', //close button element Id
+        'fadeTime': 400, //time to fade out node panel, ms
+        'holdTime': 2400, //time to hold panel on screen, ms
       },
       'tabStop': {
         'enabled': true
@@ -106,14 +115,7 @@ netgraphz.settings = (function(){
       'search': {
         'enabled': true,
         'searchInputId': "node-name-search"
-      },
-      'loading_bar_id': 'waiter',
-      'layoutStartButtonId': 'graph_layoutstart',
-      'layoutStopButtonId': 'graph_layoutstop',
-      'viewPortResetButtonId': 'graph_resetzoom',
-      'followProblemNodesCheckboxId': 'graph_follownodes',
-      'positionSaveButtonId': 'pos_save',
-      'positionClearButtonId': 'pos_clear',
+      }
     }
   };
 })();

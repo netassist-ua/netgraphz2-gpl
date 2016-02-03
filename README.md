@@ -23,7 +23,7 @@ Structure
 * /web-phalcon - Web-Interface based on PHP Phalcon framework
 * /api - Node.js express RESTful HTTP API for NetGraphz2 
 * /notifications - Node.js socket.io service to notificate browsers about state changes in Icinga monitoring system
-* /snmp_collector - Python SNMP traffic statistics data collection tool (in development)
+* /backend - Go NetGraphz2 backend (in development)
 * /node_netgraphz2 - Shared library for Node.js to work with neo4j database
 * /icinga - Icinga 2 sample configuration and scripts
 * /docs - Documentation

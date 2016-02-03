@@ -1,22 +1,23 @@
 {% extends "templates/index.volt" %}
 {% block head %}
 {{ stylesheet_link("css/graph.css") }}
+{{ javascriptInclude("js/netgraphz/tools.js") }}
+{{ javascriptInclude("js/arbor.js")}}
 {{ javascriptInclude("js/cytoscape.js") }}
+{{ javascriptInclude("js/cytoscape-arbor.js")}}
 {{ javascriptInclude("js/cytoscape.layout.forceAtlas2.js") }}
 {{ javascriptInclude("js/cytoscape/sigma.forceAtlas2.worker.js") }}
 {{ javascriptInclude("js/cytoscape/sigma.forceAtlas2.supervisor.js") }}
 {{ javascriptInclude("js/netgraphz/core.js") }}
 {{ javascriptInclude("js/netgraphz/settings.js") }}
 {{ javascriptInclude("js/netgraphz/graph_utils.js") }}
-{{ javascriptInclude("js/netgraphz/tools.js") }}
 {{ javascriptInclude("js/netgraphz/eventbus.js") }}
 {{ javascriptInclude("js/netgraphz/store.js") }}
-{{ javascriptInclude("js/netgraphz/updater2.visor.js") }}
-{{ javascriptInclude("js/netgraphz/updater2.worker.js") }}
 {{ javascriptInclude("js/netgraphz/updater.js") }}
 {{ javascriptInclude("js/netgraphz/renderer.js") }}
 {{ javascriptInclude("js/netgraphz/ui.js") }}
 {{ javascriptInclude("js/netgraphz/ui.panel.js") }}
+{{ javascriptInclude("js/netgraphz/ui.link_panel.js") }}
 {{ javascriptInclude("js/netgraphz/ui.tabstop.js") }}
 {{ javascriptInclude("js/netgraphz/ui.search.js") }}
 {{ javascriptInclude("js/netgraphz/ui.notifications.js")}}
@@ -56,6 +57,7 @@
 <div class="graph-container">
   <div id="mynet">
   </div>
-  {{ partial("graph/node_panel") }}
+  {{ include_raw("graph/node_panel.volt") }}
+  {{ include_raw("graph/link_panel.volt") }}
 </div>
 {% endblock %}
