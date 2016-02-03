@@ -1,7 +1,6 @@
 {
 	"daemon": {
 		"log_file": "/var/log/ng_backend.log",
-		"pid_file": "/var/run/ng_backend.pid",
 		"rpc_port": 8088
 	},
 	"ng_state": {

@@ -19,7 +19,7 @@ import (
 func main() {
 	foreground := flag.Bool("f", false, "Run application foreground, don't daemonize")
 	config_path := flag.String("config", "config.json", "Configuration file path")
-
+	pid_path := flag.String("pid", "/var/run/ng_backend.pid", "PID file path")
 	flag.Parse(false)
 	init_config(*config_path)
 	d_config := get_daemon_config()
@@ -29,7 +29,7 @@ func main() {
 
 	if !*foreground {
 		cntxt := &daemon.Context{
-			PidFileName: d_config.GetString("pid_file"),
+			PidFileName: *pid_path,
 			PidFilePerm: 0644,
 			LogFileName: d_config.GetString("log_file"),
 			LogFilePerm: 0640,

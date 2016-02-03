@@ -17,7 +17,6 @@ func init_config(path string) {
 	viper.SetConfigType("json")
 
 	viper.SetDefault("daemon", map[string]string{})
-	viper.SetDefault("daemon.pid_file", "/var/run/ng_backend.pid")
 	viper.SetDefault("daemon.log_file", "/var/log/ng_backend.log")
 	viper.SetDefault("daemon.rpc_port", 8800)
 
