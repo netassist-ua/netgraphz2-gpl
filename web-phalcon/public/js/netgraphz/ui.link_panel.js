@@ -8,20 +8,22 @@ netgraphz.ui = netgraphz.ui || {};
 netgraphz.ui.linkPanel = (function(ui, eventBus, tools, utils, store, jQuery){
 
 	var __interactor;
+	var defaults = {
+		fadeTime: 200,
+		holdTime: 500,
+		waitTime: 1200
+	};
+	var cfg = defaults;
+	var mouseover_timer = null;
 
-	function Interactor( user_settings, container_id ) {
+	function Interactor(container_id ) {
 		var panel_show = false;
 
 
-		var defaults = {
-			fadeTime: 400,
-			holdTime: 1200,
-		};
-
-		var cfg = tools.extend(defaults, user_settings);
 		var __publisher;
 		var self = this;
 		var __shownLink = null;
+		var __selectedLink = null;
 
 		var $panel;
 
@@ -72,19 +74,24 @@ netgraphz.ui.linkPanel = (function(ui, eventBus, tools, utils, store, jQuery){
 
 		this.setContent = function(link){
 			__shownLink = link;
-			$panel.find(".link_tx").text(tools.dataRateBpsFormat(metric_rx.values[0].value * 8));
-			$panel.find(".link_rx").text(tools.dataRateBpsFormat(metrix_tx.values[0].value * 8));
 			$panel.find(".link_capacity").text(tools.dataRateBpsFormat(link.capacity / (1000 * 1000)));
 		};
 
 
-		this.showLinkPanel = function(link, link_scr_pos){
+		this.showLinkPanel = function(link, position){
 			__shownLink = link;
 			if(timer_started){
 				self.stopLinkPanelTimer();
 			}
 			self.setContent(link);
 
+			$panel.css ({
+				'position': 'fixed',
+				'right': null,
+				'bottom': null,
+				'top': utils.getPixelsOrUndefined(position.y),
+				'left': utils.getPixelsOrUndefined(position.x)
+			});
 			if(!panel_show){
 				$panel.fadeIn(cfg.fadeTime, function(e){
 					panel_show = true;
@@ -96,109 +103,79 @@ netgraphz.ui.linkPanel = (function(ui, eventBus, tools, utils, store, jQuery){
 			return __shownLink;
 		};
 
+		this.getSelectedLink = function(){
+			return __selectedLink;
+		}
+
+		this.setSelectedLink = function(link){
+			__selectedLink = link;
+		}
+
 		this.closeLinkPanel = function() {
 			$panel.hide();
 			panel_show = false;
 		};
+
 		return this;
 	};
 
-	var mouseover_link_timer = null;
+	var stop_mouse_timer = function(){
+		if( mouseover_timer != null){
+			clearTimeout(mouseover_timer);
+			mouseover_timer = null;
+		}
+
+	}
 
 	var attach_events = function(){
 		eventBus.subscribe("ui", "edge_mouseover", function(topic, e){
-			if(mouseover_link_timer != null) {
-				clearTimeout(mouseover_link_timer);
+			if(__interactor.getSelectedLink() != null){
+				return;
 			}
-			var fn = function(){
-				mouseover_link_timer = null;
+			stop_mouse_timer();
+			mouseover_timer = setTimeout(function(){	
 				handle_link_info(e.link, e.rendererPosition);
-
-			}
-			if(__interactor.getShownLink() == null){
-				fn();
-			}
-
-			mouseover_link_timer = setTimeout(fn, 900);
+			}, cfg.waitTime);
 		});
 
-		eventBus.subscribe("ui", "edge_select", function(topic, e){
+		eventBus.subscribe("ui", "edge_tap", function(topic, e){
+			stop_mouse_timer();
 			handle_link_info(e.link, e.rendererPosition);
 			__interactor.setSelectedLink(e.link);
-			__interactor.stopLinkPanelTimer();
 		});
 
 		eventBus.subscribe("ui", "edge_unselect", function(topie, e){
-			var selected = __interactor.getSelectedLink();
 			var shown = __interactor.getShownLink();
-			__interactor.setSelectedLink(null);
-			if(selected != null && shown != null && selected.id == shown.id){
+			if(e.link.id == shown.id){
 				__interactor.startLinkPanelTimer();
+				__interactor.setSelectedLink(null);
 			}
 		});
 
 		eventBus.subscribe("ui", "edge_mouseout", function(topic,e){
-			if(mouseover_link_timer != null) {
-				clearTimeout(mouseover_link_timer);
+			stop_mouse_timer();		
+			if(__interactor.getSelectedLink() != null ){
+				return;
 			}
-			var selected = __interactor.getSelectedLink();
 			var shown = __interactor.getShownLink();
-			if( (selected != null && e.link.id != selected.id) ||
-					(shown != null && e.link.id == shown.id )){
+			if( shown != null && e.link.id == shown.id ){
 				__interactor.startLinkPanelTimer();
 			}
 		});
 
-		eventBus.subscribe("store:default", "update_link", function(topic,e){
-			var link = __interactor.getShownLink();
-			var selected = __interactor.getSelectedLink();	
-			if(link == null || typeof link !== "object") return;
-			if(typeof e.link === "undefined"){
-				console.error("[BUG] update_link event with undefined link received!");
-				return;
-			}	
-			if(selected != null && e.link.id == selected.id )
-				__interactor.setSelectedLink(e.link);
-			if(e.link.id == link.id)
-				__interactor.setContent(e.link);
-		});
-
-		eventBus.subscribe("store:default", "update_links", function(topic, e){
-			var link = __interactor.getShownLink();
-			var selected = __interactor.getSelectedLink();	
-			if(link == null || typeof link !== "object") return;
-			if(typeof e.links === "undefined" || !Array.isArray(e.links)){
-				console.error("[BUG] update_links event with undefined or non-array links received!");
-				return;
-			}
-			e.links.forEach(function(el,i,a){
-				if(typeof el !== "object"){
-					console.error("[BUG] update_links event with non-object in links array");
-					return true;
-				}
-				if(selected != null && el.id == selected.id )
-					__interactor.setSelectedLink(e.link);
-				if(el.id == link.id){
-					__interactor.setContent(el);
-					return false;
-				}
-				else {
-					return true;
-				}
-			});
-		});
 	};
 
-	var handle_link_info = function(link, rendererPosition){
+	var handle_link_info = function(link, position){
 		if(typeof link === "undefined"){
 			console.error("Cannot find %s in loaded links", link.id);
 		}
-		__interactor.showLinkPanel(link, rendererPosition);
+		__interactor.showLinkPanel(link, position);
 	};
 
 	var init = function(settings, container_id){
+		cfg = tools.extend(defaults, settings);
 		__publisher = eventBus.registerPublisher("ui.link_panel");
-		__interactor = new Interactor(settings, container_id);
+		__interactor = new Interactor(container_id);
 		attach_events();
 	};
 

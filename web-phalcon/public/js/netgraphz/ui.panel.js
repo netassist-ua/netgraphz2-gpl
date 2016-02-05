@@ -9,32 +9,33 @@ netgraphz.ui.panel = (function(ui, eventBus, tools, utils, jQuery){
 
 	var __interactor;
 
-	function Interactor( user_settings, container_id ) {
+
+	var defaults = {
+		node_panel_id: "node_panel",
+		fadeTime: 400,
+		holdTime: 2400,
+		waitTime: 900,
+		node_panel_close_button_id: "node_panel_close",
+		links: [],
+		leftPosition: {
+			left: 20,
+			right: null,
+			top: null,
+			bottom: 10
+
+		},
+		rightPosition: { 
+			right: 20,
+			left: null,
+			top: null,
+			bottom: 10 
+		}
+	};
+	var cfg = defaults;
+
+
+	function Interactor( container_id ) {
 		var panel_show = false;
-
-
-		var defaults = {
-			node_panel_id: "node_panel",
-			fadeTime: 400,
-			holdTime: 2400,
-			node_panel_close_button_id: "node_panel_close",
-			links: [],
-			leftPosition: {
-				left: 20,
-				right: null,
-				top: null,
-				bottom: 10
-
-			},
-			rightPosition: { 
-				right: 20,
-				left: null,
-				top: null,
-				bottom: 10 
-			}
-		};
-
-		var cfg = tools.extend(defaults, user_settings);
 		var __publisher;
 		var self = this;
 		var __shownNode = null;
@@ -94,7 +95,7 @@ netgraphz.ui.panel = (function(ui, eventBus, tools, utils, jQuery){
 					self.setContent(__selectedNode);
 				}
 				else {
-				     $panel.fadeOut(cfg.fadeTime, function(){
+					$panel.fadeOut(cfg.fadeTime, function(){
 						panel_show = false;
 						__shownNode = null;
 						__selectedNode = null;
@@ -116,7 +117,7 @@ netgraphz.ui.panel = (function(ui, eventBus, tools, utils, jQuery){
 			$panel.find("#node_address").text(node.address);
 			$panel.find("#node_mac").text(node.mac);
 			$panel.find("#node_model").text(node.model);
-			
+
 
 			var node_mon_data = [];
 			for( var i = 0; i < node.status.length; i++){
@@ -133,8 +134,8 @@ netgraphz.ui.panel = (function(ui, eventBus, tools, utils, jQuery){
 			}
 
 			$panel.find("#monitoring_sources").html(
-				$("#mon_source_template").render(node_mon_data)
-			);
+					$("#mon_source_template").render(node_mon_data)
+					);
 
 			var $links_container = $panel.find("#node_links");
 			$links_container.empty();
@@ -234,11 +235,12 @@ netgraphz.ui.panel = (function(ui, eventBus, tools, utils, jQuery){
 				handle_node_info(e.node, e.rendererPosition);
 
 			}
+
 			if(__interactor.getShownNode() == null){
 				fn();
 			}
-			
-			mouseover_node_timer = setTimeout(fn, 900);
+
+			mouseover_node_timer = setTimeout(fn, cfg.waitTime);
 		});
 
 		eventBus.subscribe("ui", "node_select", function(topic, e){
@@ -246,7 +248,7 @@ netgraphz.ui.panel = (function(ui, eventBus, tools, utils, jQuery){
 			__interactor.setSelectedNode(e.node);
 			__interactor.stopNodePanelTimer();
 		});
-		
+
 		eventBus.subscribe("ui", "node_unselect", function(topie, e){
 			var selected = __interactor.getSelectedNode();
 			var shown = __interactor.getShownNode();
@@ -263,7 +265,7 @@ netgraphz.ui.panel = (function(ui, eventBus, tools, utils, jQuery){
 			var selected = __interactor.getSelectedNode();
 			var shown = __interactor.getShownNode();
 			if( (selected != null && e.node.id != selected.id) ||
-			 	(shown != null && e.node.id == shown.id )){
+					(shown != null && e.node.id == shown.id )){
 				__interactor.startNodePanelTimer();
 			}
 		});
@@ -316,8 +318,9 @@ netgraphz.ui.panel = (function(ui, eventBus, tools, utils, jQuery){
 	};
 
 	var init = function(settings, container_id){
+		cfg = tools.extend(defaults, settings);
 		__publisher = eventBus.registerPublisher("ui.panel");
-		__interactor = new Interactor(settings, container_id);
+		__interactor = new Interactor(container_id);
 		attach_events();
 	};
 

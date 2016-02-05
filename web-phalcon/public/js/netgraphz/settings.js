@@ -58,6 +58,7 @@ netgraphz.settings = (function(){
         'node_panel_close_button_id': 'node_panel_close', //close button element Id
         'fadeTime': 400, //time to fade out node panel, ms
         'holdTime': 2400, //time to hold panel on screen, ms
+	'waitTime': 900, //time to wait before showing up panel on node mouse hover, ms
         'links': [
             {
                 'title': 'Icinga',
@@ -80,8 +81,8 @@ netgraphz.settings = (function(){
       'link_panel': {
 	'link_panel_id': 'link_panel', //id of node panel
         'link_panel_close_button_id': 'link_panel_close', //close button element Id
-        'fadeTime': 400, //time to fade out node panel, ms
-        'holdTime': 2400, //time to hold panel on screen, ms
+        'fadeTime': 200, //time to fade out node panel, ms
+        'holdTime': 400, //time to hold panel on screen, ms
       },
       'tabStop': {
         'enabled': true

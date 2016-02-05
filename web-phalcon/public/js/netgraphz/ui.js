@@ -39,8 +39,7 @@ netgraphz.ui = (function(store, settings, renderer, eventBus, fetcher, $){
 				       	rendererPosition: e.cyEvent.cyRenderedPosition,
 				       	date: new Date()
 				});
-	};
-
+	}; 
 	var dispatch_link_event = function(topic, e, retopic){
 		link_id = e.cyEvent.cyTarget.data('real_id');
 		if(typeof link_id === "undefined"){
@@ -52,11 +51,11 @@ netgraphz.ui = (function(store, settings, renderer, eventBus, fetcher, $){
 			console.error("Link not found in storage, id: %s", link_id);
 			return false;
 		}
-		__publisher.emit(retopic, 
+		_publisher.emit(retopic, 
 			{			
 				link: link,
 				position: e.cyEvent.cyPosition,
-				rendererPosition: e.cyEvent.cyRendererPosition,
+				rendererPosition: e.cyEvent.cyRenderedPosition,
 		        	data: new Date()
 			});
 	};
@@ -78,9 +77,21 @@ netgraphz.ui = (function(store, settings, renderer, eventBus, fetcher, $){
 			dispatch_node_event(topic, e, "node_unselect");
 		});
 		eventBus.subscribe("renderer:default", "edge_mouseover", function(topic, e){
+			dispatch_link_event(topic, e, "edge_mouseover");
 		});
-		eventBus.subscribe("renderer:default", "edge_mouseout", function( topic, e){
+		eventBus.subscribe("renderer:default", "edge_mouseout", function(topic, e){
+			dispatch_link_event(topic, e, "edge_mouseout");
 		});
+		eventBus.subscribe("renderer:default", "edge_select", function(topic, e){
+			dispatch_link_event(topic, e, "edge_select");
+		});
+		eventBus.subscribe("renderer:default", "edge_unselect", function(topic, e){
+			dispatch_link_event(topic, e, "edge_unselect");
+		});
+		eventBus.subscribe("renderer:default", "edge_tap", function(topic, e){
+			dispatch_link_event(topic, e, "edge_tap");
+		});
+
 		$(function(){
 			$(window).keyup(function(e){
 					_publisher.emitSync("window_keyup", {
