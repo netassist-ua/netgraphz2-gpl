@@ -87,6 +87,36 @@ netgraphz.utils = (function(cfg){
 	};
 
 	/*
+	 * Returns separator between links
+	 * @return {string} Link separator
+	 */
+	module.make_separator = function(){
+		return "<span class='link_separator'> | </span>";
+	};
+
+	/*
+	 * Attach events to the links container of panel
+	 * @param {jQuery} $container - jQuery object of container
+	 */
+	module.attach_link_events = function($container){
+		$container.on("click", "a", {}, function(e){
+			if($(this).data("popup")){
+				var w = window.open($(this).attr("href"), 
+						$(this).data("popup-name"),
+					       	"width="+$(this).data("popup-width")+",height="+$(this).data("popup-height"));
+				if(typeof w !== undefined){
+					w.focus();
+				}
+				else {
+					console.log("popup seems to be blocked...");
+				}
+				e.preventDefault();
+				return false;
+			}
+		});
+	};
+
+	/*
 	 * Format string replacing tags to the object properties
 	 * @param {string} str - String to replace tags
 	 * @param {object} obj - Object to obtain properties

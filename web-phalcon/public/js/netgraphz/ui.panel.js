@@ -46,20 +46,7 @@ netgraphz.ui.panel = (function(ui, eventBus, tools, utils, jQuery){
 		jQuery(function(){
 			$panel = jQuery('#' + cfg.node_panel_id);
 			var $links_container = $panel.find("#node_links");
-
-			$links_container.on("click", "a", {}, function(e){
-				if($(this).data("popup")){
-					var w = window.open($(this).attr("href"), $(this).data("popup-name"), "width="+$(this).data("popup-width")+",height="+$(this).data("popup-height"));
-					if(typeof w !== undefined){
-						w.focus();
-					}
-					else {
-						console.log("popup seems to be blocked...");
-					}
-					e.preventDefault();
-					return false;
-				}
-			});
+			utils.attach_link_events($links_container);
 			$panel.on('mouseover', function(){
 				self.stopNodePanelTimer();
 			});
@@ -76,10 +63,6 @@ netgraphz.ui.panel = (function(ui, eventBus, tools, utils, jQuery){
 
 		var fadeTimer;
 		var timer_started = false;
-
-		var make_separator = function(){
-			return "<span class='link_separator'> | </span>";
-		};
 
 
 		this.stopNodePanelTimer = function(){
@@ -135,7 +118,7 @@ netgraphz.ui.panel = (function(ui, eventBus, tools, utils, jQuery){
 
 			$panel.find("#monitoring_sources").html(
 					$("#mon_source_template").render(node_mon_data)
-					);
+			);
 
 			var $links_container = $panel.find("#node_links");
 			$links_container.empty();
@@ -148,7 +131,7 @@ netgraphz.ui.panel = (function(ui, eventBus, tools, utils, jQuery){
 				var link = cfg.links [ i ];
 				$links_container.append(utils.make_link(link, node));
 				if( i + 1 < l_length ){
-					$links_container.append(make_separator());
+					$links_container.append(utils.make_separator());
 				}
 			}
 		};

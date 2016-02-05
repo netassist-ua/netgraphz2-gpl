@@ -12,6 +12,8 @@ netgraphz.store = (function(core, eventBus, utils){
 		_links = [];
 		_metrics_links = {};
 		_metrics = {};
+		var self = this;
+
 		_publisher = eventBus.registerPublisher("store:"+name);
 
 		/*
@@ -99,7 +101,12 @@ netgraphz.store = (function(core, eventBus, utils){
 		 * @return {Link} Link object
 		 */
 		this.getLinkById = function( linkId ){
-			return _linksById[ linkId ];
+			var link =  _linksById[ linkId ];
+			if( link == undefined )
+				return null;
+			link.src.node = self.getNodeById(link.src.id);
+			link.dst.node = self.getNodeById(link.dst.id);
+			return link;
 		};
 
 		/*
