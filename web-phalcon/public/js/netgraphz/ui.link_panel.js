@@ -15,7 +15,7 @@ netgraphz.ui.linkPanel = (function(ui, eventBus, tools, utils, store, jQuery){
 
 		var defaults = {
 			fadeTime: 400,
-			holdTime: 2400,
+			holdTime: 1200,
 		};
 
 		var cfg = tools.extend(defaults, user_settings);

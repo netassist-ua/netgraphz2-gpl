@@ -29,7 +29,7 @@ netgraphz.ui = (function(store, settings, renderer, eventBus, fetcher, $){
 		var id = parseInt(matches[1]);
 		var node = store.getDefaultStorage().getNodeById(id);
 		if(typeof node === "undefined"){
-			console.error("Node not found in storage, id: %s", oid);
+			console.error("Node not found in storage, id: %s", id);
 			return;
 		}
 		_publisher.emit(retopic,
@@ -42,7 +42,23 @@ netgraphz.ui = (function(store, settings, renderer, eventBus, fetcher, $){
 	};
 
 	var dispatch_link_event = function(topic, e, retopic){
-		var regex = new RegExp("e");
+		link_id = e.cyEvent.cyTarget.data('real_id');
+		if(typeof link_id === "undefined"){
+			console.error("Cannot find link id of edge, BUG?!");
+			return false; 
+		}
+		var link = store.getDefaultStorage().getLinkById(link_id);
+		if( typeof link == "undefined"){
+			console.error("Link not found in storage, id: %s", link_id);
+			return false;
+		}
+		__publisher.emit(retopic, 
+			{			
+				link: link,
+				position: e.cyEvent.cyPosition,
+				rendererPosition: e.cyEvent.cyRendererPosition,
+		        	data: new Date()
+			});
 	};
 
 	/*

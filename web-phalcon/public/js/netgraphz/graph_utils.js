@@ -60,7 +60,7 @@ netgraphz.utils = (function(cfg){
 	 * @param {object} obj - Object to obtain properties
 	 * @return {string} Link
 	 */
-	var make_link = function( link, obj ){
+	module.make_link = function( link, obj ){
 		var tag = "<a href='" + module.format_prop_str(link.url, obj)+"' title='"+link.title+"' ";
 		if(link.type == "popup"){
 			tag += "data-popup='true' ";
@@ -93,22 +93,34 @@ netgraphz.utils = (function(cfg){
 	 * @return {string} Formatted string
 	 */
 	module.format_prop_str = function( str, obj ){
-		if( typeof node !== "object"){
-			console.error("utils.format_node_str - called with non-object [node] param");
+		if( typeof obj !== "object"){
+			console.error("utils.format_node_str - called with non-object param");
 			return str;
 		}
-		var regex = new RegExp("^.*\{(.+)\}.*$");
-		var r = regex.exec(str);
-		if( typeof r === "undefined" || r == null){
-			return str;
-		}
-		var len = r.length;
-		for( var i = 1; i < len; i++){
-			if(!node.hasOwnProperty(r[i])){
-				console.error("utils.format_node_str - property "+r[i]+" not found in [node] object");
+		var o_regexp = /.*?[^\\]?(\{(\w+[^\\]?(?:\.\w+)*)\})/g;
+		var o_matches = null;
+		while( (o_matches = o_regexp.exec(str)) != null){
+			//scan each tag avoiding screening symbols
+			if( o_matches.length < 3 ){
+				console.debug("Match with length < 2, skipping. BUG?!");
 				continue;
 			}
-			str = str.replace('{'+r[i]+'}', node[r[i]]);
+			var tag = o_matches[ 2 ];
+			var i_regexp = /(\w+)[^\\]?(?:\.(\w+))*/g;
+			var i_matches = null;
+			var prop_val = obj;
+			while( (i_matches = i_regexp.exec(tag)) != null ){
+				if( typeof prop_val !== "object" ){
+					console.debug("Cannot find subproperty of object, skipping");
+					break;
+				}
+				if( i_matches.length < 2 ){
+					console.debug("Match with length < 2, skipping. BUG?!");
+					continue;
+				}
+				prop_val = prop_val[i_matches[1]];
+			}
+			str = str.replace('{'+tag+'}', prop_val.toString());
 		}
 		return str;
 	};
