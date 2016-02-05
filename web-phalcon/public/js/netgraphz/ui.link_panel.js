@@ -74,7 +74,7 @@ netgraphz.ui.linkPanel = (function(ui, eventBus, tools, utils, store, jQuery){
 
 		this.setContent = function(link){
 			__shownLink = link;
-			$panel.find(".link_capacity").text(tools.dataRateBpsFormat(link.capacity / (1000 * 1000)));
+			$panel.find(".link_capacity").text(tools.dataRateBpsFormat(link.link_speed * (1000 * 1000)));
 		};
 
 

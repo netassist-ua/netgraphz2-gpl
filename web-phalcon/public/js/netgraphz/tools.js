@@ -36,7 +36,11 @@ netgraphz.tools = (function(){
 		var prefixes = ['', 'k', 'M', 'G', 'T', 'P', 'E', 'Z', 'Y'];
 		var pow = Math.floor(Math.log10(value));
 		var index = Math.floor(pow/3);
-		var decimalPower = index * 3;	
+		var decimalPower = index * 3;
+		if( index < 0 ){
+			index = 0;
+			decimalPower = 0;
+		}
 		if( index >= prefixes.length ){
 			index = prefixes.length - 1;
 			decimalPower = (prefixes.length - 1) * 3;
