@@ -80,6 +80,7 @@ netgraphz.ui.linkPanel = (function(ui, eventBus, tools, utils, store, jQuery){
 			$link_load_block = $panel.find(".link_load_block");
 			$src_port_block = $panel.find(".src_port_block");
 			$dst_port_block = $panel.find(".dst_port_block");
+			$links_block = $panel.find(".links_block");
 			
 			//reset visibility
 			
@@ -87,11 +88,38 @@ netgraphz.ui.linkPanel = (function(ui, eventBus, tools, utils, store, jQuery){
 			$link_load_block.hide();
 			$src_port_block.hide();
 			$dst_port_block.hide();
+			$links_block.hide();
+
+			if( (typeof link.rx_octets === "string" || typeof link.tx_octets === "string") 
+					&& (link.rx_octets != "" || link.tx_octets != "") ){
+				var rx_metrics = store.getDefaultStorage().getMetricValues(link.rx_octets);
+				var tx_metrics = store.getDefaultStorage().getMetricValues(link.tx_octets);
+				var rx_load_text = "unknown";
+				var tx_load_text = "unknown";
+				var rx_values = store.getDefaultStorage().getMetricValues(link.rx_octets);
+				var tx_values = store.getDefaultStorage().getMetricValues(link.tx_octets);
+				if(Array.isArray(rx_values) && rx_values.length > 0){
+						rx_load_text = tools.dataRateBpsFormat(rx_values[0].value * 8, 2);
+						$link_load_block.show();
+				}
+				if(Array.isArray(tx_values) && tx_values.length > 0){
+						tx_load_text = tools.dataRateBpsFormat(tx_values[0].value * 8, 2);
+						$link_load_block.show();
+				}
+				$link_load_block.find(".link_rx").text(rx_load_text);
+				$link_load_block.find(".link_tx").text(tx_load_text);
+			}
 
 			if(typeof link.link_speed === "number" && link.link_speed > 0){
 				$link_capacity_block.show();
 				$link_capacity_block.find(".link_capacity")
 					.text(tools.dataRateBpsFormat(link.link_speed * (1000 * 1000)));
+				var duplex = true;
+				if( typeof link.duplex === "boolean" ){
+					duplex = link.duplex;
+				}
+				$link_capacity_block.find(".link_duplex").text(duplex ? "Yes" : "No");
+
 			}
 			$panel.find(".src_name").text(link.src.node.name);
 			$panel.find(".dst_name").text(link.dst.node.name);
@@ -105,6 +133,9 @@ netgraphz.ui.linkPanel = (function(ui, eventBus, tools, utils, store, jQuery){
 			}
 
 			var l_length = cfg.links.length;
+			if( l_length > 0 ){
+				$links_block.show();
+			}
 			for( var i = 0; i < l_length; i ++ ){
 				var ex_link = cfg.links [ i ];
 				$links_container.append(utils.make_link(ex_link, link));
@@ -112,7 +143,8 @@ netgraphz.ui.linkPanel = (function(ui, eventBus, tools, utils, store, jQuery){
 					$links_container.append(utils.make_separator());
 				}
 			}
-
+			//set size
+		
 		};
 
 
@@ -133,6 +165,10 @@ netgraphz.ui.linkPanel = (function(ui, eventBus, tools, utils, store, jQuery){
 			if(!panel_show){
 				$panel.fadeIn(cfg.fadeTime, function(e){
 					panel_show = true;
+					$panel.css({
+						"height": utils.getPixelsOrUndefined($panel.children(".panel-heading").outerHeight()
+							       	+ $panel.children(".panel-body").outerHeight())
+					});
 				});
 			};
 		};
@@ -152,6 +188,7 @@ netgraphz.ui.linkPanel = (function(ui, eventBus, tools, utils, store, jQuery){
 		this.closeLinkPanel = function() {
 			$panel.hide();
 			panel_show = false;
+			__selectedLink = null;
 		};
 
 		return this;
@@ -200,7 +237,6 @@ netgraphz.ui.linkPanel = (function(ui, eventBus, tools, utils, store, jQuery){
 				__interactor.startLinkPanelTimer();
 			}
 		});
-
 	};
 
 	var handle_link_info = function(link, position){

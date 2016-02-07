@@ -259,17 +259,21 @@ netgraphz.renderer = (function(store, eventBus, tools, utils){
 				var rx_load = -1;
 				var tx_load = -1;
 				var capacity = e.link_speed || 0;
-				var duplex = true; //TODO
+				var duplex = true;
+				if( typeof e.duplex === "boolean" ){
+					duplex = e.duplex;
+				}
+
 
 				if(e.rx_octets != "" ){
 					var values = store.getDefaultStorage().getMetricValues(e.rx_octets);
-					if(values.length > 0){
+					if(Array.isArray(values) && values.length > 0){
 						rx_load = values[0].value * 8/ (1000*1000);
 					}
 				}
 				if( e.tx_octets != ""){
 					var values = store.getDefaultStorage().getMetricValues(e.tx_octets);
-					if(values.length > 0){
+					if(Array.isArray(values) && values.length > 0){
 						tx_load = values[0].value * 8 / (1000*1000);
 					}
 				}
