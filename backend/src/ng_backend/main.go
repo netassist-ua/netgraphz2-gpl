@@ -77,7 +77,10 @@ func main() {
 
 	go func() {
 		log.Printf("gRPC server starting on %s:%d\n", d_config.GetString("rpc_host"), d_config.GetInt("rpc_port"))
-		grpcServer.Serve(lis)
+		err := grpcServer.Serve(lis)
+		if err != nil {
+			log.Fatalf("Error during listening: %v\n", err)
+		}
 	}()
 
 	log.Printf("Starting collectd listener on %s:%d\n", metric_config.GetString("collectd.host"), metric_config.GetInt("collectd.port"))

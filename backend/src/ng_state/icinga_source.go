@@ -59,12 +59,21 @@ func getRTTPacketLossFromPerfdata(perf_data string) (rtt float32, loss float32, 
 	return
 }
 
-func icinga_state_to_effective_state(state int16, has_been_checked bool, is_flapping bool, num_services_crit int32, num_services_warn int32) EffectiveHostState {
+func icinga_state_to_effective_state(state int16, hard_state int16, has_been_checked bool, is_flapping bool, num_services_crit int32, num_services_warn int32) EffectiveHostState {
 	if !has_been_checked {
 		return E_STATE_UNKNOWN
 	}
 	if is_flapping {
 		return E_STATE_FLAPPING
+	}
+	if NetworkState(state) == STATE_UNREACH {
+		if num_services_crit == 0 && num_services_warn == 0 {
+			return E_STATE_UP
+		}
+		if NetworkState(hard_state) == STATE_DOWN {
+			return E_STATE_DOWN
+		}
+		return E_STATE_WARNING
 	}
 	if (NetworkState(state) != STATE_DOWN) && (num_services_crit > 0 || num_services_warn > 0) {
 		return E_STATE_WARNING
@@ -171,7 +180,7 @@ func dispatchLivestatusHostsResponse(resp *livestatus.Response, sourceName strin
 		s.Source = sourceName
 		s.HasBeenChecked = has_been_checked
 		s.State = icinga_state_to_netstate(int16(state))
-		s.EffectiveState = icinga_state_to_effective_state(int16(state), has_been_checked, is_flapping, int32(num_services_crit), int32(num_services_warn))
+		s.EffectiveState = icinga_state_to_effective_state(int16(state), int16(hard_state), has_been_checked, is_flapping, int32(num_services_crit), int32(num_services_warn))
 		s.HardState = icinga_state_to_netstate(int16(hard_state))
 		s.Loss = loss
 		s.RTT = rtt
