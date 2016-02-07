@@ -67,7 +67,7 @@ func main() {
 	icinga_source := state.NewIcingaLiveStateSource(icinga_config)
 	status_srv.AddSource(icinga_source)
 
-	lis, err := net.Listen("tcp", fmt.Sprintf(":%d", d_config.GetInt("rpc_port")))
+	lis, err := net.Listen("tcp", net.JoinHostPort(d_config.GetString("rpc_host"), fmt.Sprintf("%d", d_config.GetInt("rpc_port"))))
 	if err != nil {
 		log.Printf("failed to listen: %v", err)
 	}
@@ -76,7 +76,7 @@ func main() {
 	rpc.RegisterBackendServer(grpcServer, rpc_server.NewRPCServer(graph_store, status_srv, metric_store))
 
 	go func() {
-		log.Printf("gRPC server starting on port %d\n", d_config.GetInt("rpc_port"))
+		log.Printf("gRPC server starting on %s:%d\n", d_config.GetString("rpc_host"), d_config.GetInt("rpc_port"))
 		grpcServer.Serve(lis)
 	}()
 

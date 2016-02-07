@@ -1,7 +1,8 @@
 {
 	"daemon": {
 		"log_file": "/var/log/netgraphz2/ng_backend.log",
-		"rpc_port": 8088
+		"rpc_port": 8088,
+		"rpc_host": "127.0.0.1"
 	},
 	"ng_state": {
 		"cache": {

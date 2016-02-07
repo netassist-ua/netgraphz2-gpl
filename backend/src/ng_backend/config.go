@@ -19,6 +19,7 @@ func init_config(path string) {
 	viper.SetDefault("daemon", map[string]string{})
 	viper.SetDefault("daemon.log_file", "/var/log/ng_backend.log")
 	viper.SetDefault("daemon.rpc_port", 8800)
+	viper.SetDefault("daemon.rpc_host", "locahost")
 
 	viper.SetDefault("ng_state", map[string]string{})
 	viper.SetDefault("ng_state.cache.ttl", 10000)
