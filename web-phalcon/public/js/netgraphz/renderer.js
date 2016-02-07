@@ -1,5 +1,5 @@
 /*
-Cytoscape.js netgraphz graph rendering module
+   Cytoscape.js netgraphz graph rendering module
 Contains add/remove/render functions for graph visual perspective
 */
 var netgraphz = netgraphz || { };
@@ -412,11 +412,13 @@ netgraphz.renderer = (function(store, eventBus, tools, utils){
 				if (ex_links[[e.src.id, e.dst.id]] || ex_links[[e.dst.id, e.src.id]])
 				return true;
 				if (nodes_by_id[e.src.id] && nodes_by_id[e.dst.id]) {
+					var label = typeof e.link_speed === "number" ?  tools.dataRateBpsFormat(e.link_speed * (1000 * 1000)) : "";
 					ex_links[[e.src.id, e.dst.id]] = true;
 					g.push({
 						group: 'edges',
 						data: {
 							id: 'e' + e.id,
+							speed: label,
 							source: 'n' + e.src.id,
 							target: 'n' + e.dst.id,
 							style: _prepare_edge_style(e),
@@ -469,6 +471,9 @@ netgraphz.renderer = (function(store, eventBus, tools, utils){
 						'style': {
 							'curve-style': 'segments',
 							'width': '4px',
+							'background-color': '#ccc',
+							'font-size': '4px',
+							'content': 'data(speed)'
 						}
 					},
 					{
@@ -596,4 +601,4 @@ netgraphz.renderer = (function(store, eventBus, tools, utils){
 
 		return exports;
 
-	})(netgraphz.store, netgraphz.eventBus, netgraphz.tools, netgraphz.utils);
+})(netgraphz.store, netgraphz.eventBus, netgraphz.tools, netgraphz.utils);
