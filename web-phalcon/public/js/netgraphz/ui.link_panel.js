@@ -237,6 +237,44 @@ netgraphz.ui.linkPanel = (function(ui, eventBus, tools, utils, store, jQuery){
 				__interactor.startLinkPanelTimer();
 			}
 		});
+		
+		eventBus.subscribe("store:default", "update_node", function(topic,e){
+			var link = __interactor.getShownLink();
+			if(link == null || typeof link !== "object") return;
+			if(typeof e.node === "undefined"){
+				console.error("[BUG] update_node event with undefined node received!");
+				return;
+			}
+			if(e.node.id == link.src.node.id || e.node.id == link.dst.node.id){
+				var n_link = store.getDefaultStorage().getLinkById(link.id);
+				__interactor.setContent(n_link);
+			}
+
+		});
+
+		eventBus.subscribe("store:default", "update_nodes", function(topic, e){
+			var link = __interactor.getShownLink();
+			if(link == null || typeof link !== "object") return;
+			if(typeof e.nodes === "undefined" || !Array.isArray(e.nodes)){
+				console.error("[BUG] update_nodes event with undefined or non-array nodes received!");
+				return;
+			}
+			e.nodes.forEach(function(el,i,a){
+				if(typeof el !== "object"){
+					console.error("[BUG] update_nodes event with non-object in nodes array");
+					return true;
+				}
+				if(el.id == link.src.node.id || el.id == link.dst.node.id){
+					var n_link = store.getDefaultStorage().getLinkById(link.id);
+					__interactor.setContent(n_link);
+					return false;
+				}
+				else {
+					return true;
+				}
+			});
+		});
+
 	};
 
 	var handle_link_info = function(link, position){
