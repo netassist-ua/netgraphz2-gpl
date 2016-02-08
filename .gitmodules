@@ -1,0 +1,4 @@
+[submodule "web-phalcon/vendor/datto/protobuf-php"]
+	path = web-phalcon/vendor/datto/protobuf-php 
+	url = git://github.com/stanley-cheung/Protobuf-PHP.git 
+
