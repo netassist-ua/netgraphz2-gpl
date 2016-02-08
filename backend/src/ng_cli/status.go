@@ -16,9 +16,6 @@ type StatusCmdlet struct {
 }
 
 func (c *StatusCmdlet) ExecuteCommand(tokens []string) error {
-	if len(tokens) >= 2 && strings.TrimSpace(tokens[2]) != "" {
-		return errors.New("Status command has no arguments")
-	}
 	req := &ng_rpc.StatusRequest{
 		Time: proto.Int64(time.Now().Unix()),
 	}
