@@ -349,7 +349,7 @@ netgraphz.renderer = (function(store, eventBus, tools, utils){
 		this.update_node = function(node){
 			_update_node_links_status(node);
 			var prevNode = store.getDefaultStorage().getNodeById(node.id);
-			var requires_update = (!prevNode) || node.state !== prevNode.state;
+			var requires_update = (!prevNode) || utils.get_node_pref_effective_state(node) !== utils.get_node_pref_effective_state(prevNode);
 			if( !requires_update ){
 				return;
 			}
