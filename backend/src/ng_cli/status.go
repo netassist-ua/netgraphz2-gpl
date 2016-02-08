@@ -16,9 +16,6 @@ type StatusCmdlet struct {
 }
 
 func (c *StatusCmdlet) ExecuteCommand(tokens []string) error {
-	if c.instance.client == nil {
-		return errors.New("Not connected to the server")
-	}
 	if len(tokens) >= 2 && strings.TrimSpace(tokens[2]) != "" {
 		return errors.New("Status command has no arguments")
 	}
@@ -44,6 +41,10 @@ func (c *StatusCmdlet) GetAutocomplete() []*readline.PrefixCompleter {
 
 func (c *StatusCmdlet) GetCommandPrefix() string {
 	return "status"
+}
+
+func (c *StatusCmdlet) RequiresConnection() bool {
+	return true
 }
 
 func (c *StatusCmdlet) SetConsoleInstance(instance *ConsoleInstance) {

@@ -27,6 +27,7 @@ type (
 		GetAutocomplete() []*readline.PrefixCompleter
 		GetCommandPrefix() string
 		SetConsoleInstance(instance *ConsoleInstance)
+		RequiresConnection() bool
 	}
 )
 

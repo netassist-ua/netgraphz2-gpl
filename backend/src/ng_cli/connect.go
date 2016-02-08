@@ -44,3 +44,7 @@ func (c *ConnectCmdlet) GetCommandPrefix() string {
 func (c *ConnectCmdlet) SetConsoleInstance(instance *ConsoleInstance) {
 	c.instance = instance
 }
+
+func (c *ConnectCmdlet) RequiresConnection() bool {
+	return false
+}

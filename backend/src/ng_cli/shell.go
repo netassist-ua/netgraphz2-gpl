@@ -49,6 +49,11 @@ func main() {
 		for _, cmdlet := range cmdlets {
 			if tokens[0] == cmdlet.GetCommandPrefix() {
 				found = true
+				if cmdlet.RequiresConnection() && instance.connection == nil {
+					rl.Terminal.Print("Command requires established server connection.\n")
+					rl.Terminal.Print("Use 'connect' command first to establish connection.\n")
+					break
+				}
 				err = cmdlet.ExecuteCommand(tokens)
 				if err != nil {
 					rl.Terminal.Print(fmt.Sprintf("Error: %v\n", err))

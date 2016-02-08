@@ -70,11 +70,7 @@ func (c *ListCmdlet) ExecuteCommand(tokens []string) error {
 		c.PrintUsage()
 		return errors.New("Arguments error")
 	}
-	if c.instance.client == nil {
-		return errors.New("Not connected to the server")
-	}
 	object := tokens[1]
-
 	if len(tokens) >= 3 {
 		raw_options, err = ParseEqOptions(strings.Join(tokens[2:], " "))
 		if err != nil {
@@ -106,4 +102,8 @@ func (c *ListCmdlet) GetCommandPrefix() string {
 
 func (c *ListCmdlet) SetConsoleInstance(instance *ConsoleInstance) {
 	c.instance = instance
+}
+
+func (c *ListCmdlet) RequiresConnection() bool {
+	return true
 }

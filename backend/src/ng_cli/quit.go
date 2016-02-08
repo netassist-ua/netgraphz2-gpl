@@ -29,3 +29,7 @@ func (q *QuitCmdlet) GetCommandPrefix() string {
 
 func (q *QuitCmdlet) SetConsoleInstance(instance *ConsoleInstance) {
 }
+
+func (q *QuitCmdlet) RequiresConnection() bool {
+	return false
+}
