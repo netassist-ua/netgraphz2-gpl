@@ -40,7 +40,7 @@ func ParseEqOptions(option_str string) (map[string]string, error) {
 		case 2:
 			options[submatch[1]] = "true"
 		default:
-			return options, errors.New("Failed to parse optionss")
+			return options, errors.New("Failed to parse options")
 		}
 	}
 	return options, nil
@@ -68,6 +68,6 @@ func (c *ConsoleInstance) Disconnect() {
 
 func get_cmdlets() []Cmdlet {
 	cmdlets := []Cmdlet{}
-	cmdlets = append(cmdlets, &QuitCmdlet{}, &ConnectCmdlet{}, &ListCmdlet{})
+	cmdlets = append(cmdlets, &QuitCmdlet{}, &ConnectCmdlet{}, &ListCmdlet{}, &StatusCmdlet{})
 	return cmdlets
 }
