@@ -1,13 +1,11 @@
 package main
 
 import (
-	"errors"
 	"fmt"
 	"github.com/golang/protobuf/proto"
 	"golang.org/x/net/context"
 	"gopkg.in/readline.v1"
 	"ng_rpc"
-	"strings"
 	"time"
 )
 
