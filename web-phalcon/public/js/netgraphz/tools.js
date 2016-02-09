@@ -29,11 +29,12 @@ netgraphz.tools = (function(){
 
 	/**
 	 *  Formats data rate in bits per second to a human readable form
-	 *  @param {number} value Data date in bps
-	 *  @param {number} decimal_places Number of decimal places to show up
+	 *  @param {number} value - Data date in bps
+	 *  @param {number} decimal_places - Number of decimal places to show up
+	 *  @param {boolean} prefix_only - Return just decimal prefix
 	 *  @returns {string} Formatted data rate string
 	 */
-	module.dataRateBpsFormat = function( value, decimal_places ){
+	module.dataRateBpsFormat = function( value, decimal_places, prefix_only ){
 		var prefixes = ['', 'k', 'M', 'G', 'T', 'P', 'E', 'Z', 'Y'];
 		var pow = Math.floor(Math.log10(value));
 		var index = Math.floor(pow/3);
@@ -50,7 +51,7 @@ netgraphz.tools = (function(){
 		if( typeof decimal_places === "number" && decimal_places > 0){
 			num_part = (value / Math.pow(10, decimalPower)).toFixed(decimal_places);
 		}
-		return num_part + ' ' + prefixes[index] + 'bps';
+		return num_part + ' ' + prefixes[index] + (prefix_only ? '' : 'bps');
 	};
 
 	/**

@@ -417,7 +417,7 @@ netgraphz.renderer = (function(store, eventBus, tools, utils){
 				return true;
 				if (nodes_by_id[e.src.id] && nodes_by_id[e.dst.id]) {
 					var label = (typeof e.link_speed === "number" && e.link_speed > 0) ? 
-						tools.dataRateBpsFormat(e.link_speed * (1000 * 1000)) : "";
+						tools.dataRateBpsFormat(e.link_speed * (1000 * 1000), 0, true) : "";
 					ex_links[[e.src.id, e.dst.id]] = true;
 					g.push({
 						group: 'edges',

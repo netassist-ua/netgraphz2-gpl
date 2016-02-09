@@ -53,6 +53,8 @@
 
 <div id="waiter">
   <img src="/img/waiter.gif" alt="waiter"/>
+  <br />
+  <label>Loading graph nodes:</label> <span class="wait_percents">0%</span>
 </div>
 <div class="graph-container">
   <div id="mynet">

@@ -5,6 +5,11 @@
 var netgraphz =  netgraphz || {};
 netgraphz.settings = (function(){
   return {
+    'init': {
+	    'node_part_size': 10,
+	    'node_part_retry_wait': 1000,
+	    'node_part_retry_times': 5
+    },
     'communication': {
       'remote_url': 'http://127.0.0.1:3433', //URL of notifications server
     },
