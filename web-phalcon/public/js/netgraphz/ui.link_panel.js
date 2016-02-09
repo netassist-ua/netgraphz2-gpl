@@ -221,7 +221,7 @@ netgraphz.ui.linkPanel = (function(ui, eventBus, tools, utils, store, jQuery){
 
 		eventBus.subscribe("ui", "edge_unselect", function(topie, e){
 			var shown = __interactor.getShownLink();
-			if(e.link.id == shown.id){
+			if(shown != null && e.link.id == shown.id){
 				__interactor.startLinkPanelTimer();
 				__interactor.setSelectedLink(null);
 			}
