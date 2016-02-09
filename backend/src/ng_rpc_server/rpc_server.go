@@ -45,7 +45,6 @@ func (s *RPCServer) fetch_last_metrics(host_name string, n_get uint32) (map[stri
 			if m.GetType() == metric.METRIC_DERIVE {
 				m_values, err = metric.DeriveMetricValues(m_values, true)
 				if err != nil {
-					log.Printf("Cannot derive metric values: %s. Continue other metrics...\n", err)
 					continue
 				}
 			}

@@ -269,7 +269,7 @@ class GraphController extends ControllerBase {
 	public function fetchAllLinksAction(){
 		$this->view->setRenderLevel(View::LEVEL_NO_RENDER);
 		$count = $this->_linksRepo->CountAllLinks();
-		$links = $this->_linksRepo->GetAllByLastId(0, $count);
+		$links = $this->_linksRepo->GetAllByLastId(0, ($count * 2) + 1);
 		$this->sendJsonResponse($links);
 	}
 }
