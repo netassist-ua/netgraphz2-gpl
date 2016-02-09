@@ -87,7 +87,7 @@ class RPCAdapter implements IGraphAdapter {
 		$node->address = $rpc_node->getAddress();
 		$states = $rpc_node->getStatesList();
 		foreach ($states as $state) {
-			array_push($node->status, $this->getNodeStatus($state));
+			$node->status[] = $this->getNodeStatus($state);
 		}
 		$rpc_metrics = $rpc_node->getLastMetricValuesList();
 		foreach ($rpc_metrics as $rpc_metric){
@@ -96,9 +96,9 @@ class RPCAdapter implements IGraphAdapter {
 			$metric->values = array();
 			$rpc_values = $rpc_metric->getValue()->getValuesList();
 			foreach( $rpc_values as $rpc_value ){
-				array_push($metric->values, $this->getNodeMetricValue($rpc_value));
+				$metric->values[] = $this->getNodeMetricValue($rpc_value);
 			}
-			array_push($node->metrics, $metric);
+			$node->metrics[] = $metric;
 		}
 		return $node;
 	}
@@ -140,7 +140,7 @@ class RPCAdapter implements IGraphAdapter {
 	public function getLinks($rpc_links, $use_node_data = false){
 		$out_links = array();
 		foreach( $rpc_links as $rpc_link ){
-			array_push($out_links, $this->getLink($rpc_link));
+			$out_links[] = $this->getLink($rpc_link);
 		}
 		return $out_links;
 	}
@@ -152,7 +152,7 @@ class RPCAdapter implements IGraphAdapter {
 	public function getNodes($rpc_nodes){
 		$out_nodes = array();
 		foreach ($rpc_nodes as $rpc_node) {
-			array_push($out_nodes, $this->getNode($rpc_node));
+			$out_nodes[] = $this->getNode($rpc_node);
 		}
 		return $out_nodes;
 	}
