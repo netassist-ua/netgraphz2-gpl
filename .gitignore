@@ -1,0 +1,77 @@
+/web-phalcon/nbproject/private/
+/web-phalcon/cache/
+/web-phalcon/app/cache/
+/web-phalcon/config/development/
+/web-phalcon/vendor/
+/web-phalcon/composer.lock
+
+
+/icinga_config_generator/out/
+/icinga_config_generator/configs.tar
+nbproject/private/
+build/
+nbbuild/
+dist/
+nbdist/
+nbactions.xml
+nb-configuration.xml
+.nb-gradle/
+*.swp
+
+# Automake
+Makefile.in
+# Autoconf
+backend/autom4te.cache
+backend/aclocal.m4
+backend/compile
+backend/configure
+backend/depcomp
+backend/install-sh
+backend/missing
+backend/stamp-h1
+
+backend/bin
+backend/ng_cli
+backend/ng_backend
+
+
+.deps
+.libs
+# Compiled Object files
+*.slo
+*.lo
+*.o
+*.obj
+
+# Precompiled Headers
+*.gch
+*.pch
+
+# Compiled Dynamic libraries
+*.so
+*.dylib
+*.dll
+
+# Fortran module files
+*.mod
+
+# Compiled Static libraries
+*.lai
+*.la
+*.a
+*.lib
+
+# Executables
+*.exe
+*.out
+*.app
+
+# Thrift
+/thrift/gen-*/
+
+#LibreOffice
+.~lock.*
+#VI
+.*.sw?
+Status API Training Shop Blog About Pricing
+
