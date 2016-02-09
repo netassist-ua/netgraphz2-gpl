@@ -64,18 +64,12 @@ class GraphController extends ControllerBase {
 	 * @param string|null $error Error description to send
 	 * @return boolean Result
 	 */
-	private function sendStateResponse($state, $error_code, $error){
+	private function sendStateResponse($state, $error_code = 200, $error = null){
 		$base = array(
 			"state" => $state
 		);
-		if(isset($error)){
+		if($error != null){
 			$base["error"] = $error;
-		}
-		if(isset($error_code)){
-			$base["error_code"] = $error_code;
-		}
-		else {
-			$error_code = 200;
 		}
 		return $this->sendJsonResponse($base, $error_code);
 	}
