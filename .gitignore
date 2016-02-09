@@ -4,6 +4,8 @@
 /web-phalcon/config/development/
 /web-phalcon/vendor/
 /web-phalcon/composer.lock
+/web-phalcon/app/config/config.php
+/web-phalcon/app/public/js/netgraphz/settings.js
 
 /icinga_config_generator/out/
 /icinga_config_generator/configs.tar
