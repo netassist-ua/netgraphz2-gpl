@@ -151,7 +151,6 @@ func (s *StatusService) GetHostsStatusByName(host_names []string) (map[string][]
 			}
 			cache_found = append(cache_found, cache_rec.State)
 		}
-		log.Printf("State cache: %d missed, %d expired, %d found \n", len(cache_missed), len(cache_expired), len(cache_found))
 		states_to_name_map(m, cache_found)
 		if _, err := s.fetch_cache_name_map(m, cache_expired_hostnames, src.GetFullName()); err != nil {
 			last_error = err
