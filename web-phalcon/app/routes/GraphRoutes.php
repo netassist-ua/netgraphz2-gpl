@@ -11,8 +11,6 @@ class GraphRoutes extends RouterGroup
 		$this->addPost("/positions", "Graph::savePositions");
 		$this->addDelete("/positions", "Graph::deletePositions");
 
-
-		$this->addGet("/fetchAllNodes", "Graph::fetchAllNodes");
 		$this->addGet("/fetchAllLinks", "Graph::fetchAllLinks");
 
 		$this->addGet("/userParams", "Graph::getUserParameters");

@@ -80,44 +80,6 @@ class GraphController extends ControllerBase {
 		return $this->sendJsonResponse($base, $error_code);
 	}
 
-	/**
-	 *
-	 * Appends stored position coordinates (x,y) from user profile to nodes
-	 * Return original array if no positions stored or user is not logged in
-	 *
-	 * @param \NetAssist\Graph\Nodes[] Nodes to append
-	 * @return \NetAssist\Graph\Nodes[] Nodes with appended positions
-	 */
-	private function appendUserPositions($nodes){
-		try {
-			$identity = $this->auth->getIdentity();
-			if(!$identity || $identity == null){
-				return $nodes;
-			}
-			$uid = $this->auth->getUserId();
-			$u_nodes = UserNodes::findFirst(array(
-				array(
-					"uid" => $uid
-				)
-			));
-			if($u_nodes == null){
-				return $nodes;
-			}
-			foreach ($nodes as $node) {
-				if(array_key_exists($node->id, $u_nodes->positions)){
-					$pos = (object)$u_nodes->positions[$node->id];
-					$node->x = $pos->x;
-					$node->y = $pos->y;
-				}
-			}
-		}
-		catch(Exception $e) {
-			error_log(sprintf("Couldn't fetch user graph position, error: %s", addslashes($e->getMessage())), 0);
-		}
-		return $nodes;
-	}
-
-
 
 	/**
 	 * GET /Graph/status
@@ -227,8 +189,7 @@ class GraphController extends ControllerBase {
 				)
 			));
 			if( $u_nodes == false ){
-				$u_nodes = new UserNodes();
-				$u_nodes->uid = $uid;
+				$u_nodes = new UserNodes(); $u_nodes->uid = $uid;
 			}
 			$u_nodes->lastModified = $m_now;
 			$rawBody = $this->request->getJsonRawBody(true);
@@ -249,17 +210,6 @@ class GraphController extends ControllerBase {
 			return $this->sendStateResponse(false, 500, "MongoDB save failure");
 		}
 		return $this->sendStateResponse(true);
-	}
-	/*
-	 * GET /Graph/fetchAllNodes
-	 * Fetch all nodes in graph, returns list of nodes with parameters in JSON
-	 **/
-	public function fetchAllNodesAction(){
-		$this->view->setRenderLevel(View::LEVEL_NO_RENDER);
-		$count = $this->_nodesRepo->CountAllNodes();
-		$nodes = $this->_nodesRepo->GetAllByLastId(0, $count);
-		$nodes = $this->appendUserPositions($nodes);
-		$this->sendJsonResponse($nodes);
 	}
 	/*
 	 *  GET /Graph/fetchAllLinks
