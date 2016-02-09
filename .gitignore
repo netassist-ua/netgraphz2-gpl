@@ -5,7 +5,6 @@
 /web-phalcon/vendor/
 /web-phalcon/composer.lock
 
-
 /icinga_config_generator/out/
 /icinga_config_generator/configs.tar
 nbproject/private/
@@ -34,6 +33,7 @@ backend/bin
 backend/ng_cli
 backend/ng_backend
 
+/notifications/node_modules/
 
 .deps
 .libs
