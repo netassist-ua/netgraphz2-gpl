@@ -190,11 +190,10 @@ netgraphz.ui = (function(utils, store, settings, renderer, eventBus, fetcher, $)
           var url = settings.node_cxt_links[i].url;
           node_commands.push({
             content: settings.node_cxt_links[i].content,
-            select: function(e){
+            select: function(e, url){
                   var id = e.data('real_id');
                   var node = store.getDefaultStorage().getNodeById(id);
                   var redirectWindow = window.open(utils.format_prop_str(url, node), '_blank');
-                  redirectWindow.location;
             }
           });
         }
