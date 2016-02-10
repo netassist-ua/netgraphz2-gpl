@@ -12,11 +12,13 @@ import (
 
 type (
 	CollectdMetricSource struct {
-		storages []MetricStorage
-		server   *network.Server
-		writer   *CollectdMetricWriter
-		started  bool
-		mutex    sync.Mutex
+		storages      []MetricStorage
+		server        *network.Server
+		writer        *CollectdMetricWriter
+		started       bool
+		mutex         sync.Mutex
+		filter_enable bool
+		filter_types  []string
 	}
 	CollectdMetricWriter struct {
 		source *CollectdMetricSource
@@ -57,16 +59,27 @@ func (w CollectdMetricWriter) Write(vl api.ValueList) error {
 	}
 	for _, s := range w.source.storages {
 		for i := 0; i < len(vl.Values); i++ {
-			s.AddMetricValue(metrics[i], metricValues[i])
+			if w.source.filter_enable {
+				for _, filter_type := range w.source.filter_types {
+					if filter_type == metrics[i].Type {
+						s.AddMetricValue(metrics[i], metricValues[i])
+					}
+					break
+				}
+			} else {
+				s.AddMetricValue(metrics[i], metricValues[i])
+			}
 		}
 	}
 	return nil
 }
 
-func NewCollectdMetricSource(listen_host string, listen_port uint16) *CollectdMetricSource {
+func NewCollectdMetricSource(listen_host string, listen_port uint16, filter_enable bool, filter_types []string) *CollectdMetricSource {
 	source := &CollectdMetricSource{}
 	source.writer = &CollectdMetricWriter{}
 	source.writer.source = source
+	source.filter_enable = filter_enable
+	source.filter_types = filter_types
 	source.server = &network.Server{
 		Addr:   net.JoinHostPort(listen_host, strconv.FormatUint(uint64(listen_port), 10)),
 		Writer: source.writer,

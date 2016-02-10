@@ -85,7 +85,7 @@ func main() {
 
 	log.Printf("Starting collectd listener on %s:%d\n", metric_config.GetString("collectd.host"), metric_config.GetInt("collectd.port"))
 
-	source := metric.NewCollectdMetricSource(metric_config.GetString("collectd.host"), uint16(metric_config.GetInt("collectd.port")))
+	source := metric.NewCollectdMetricSource(metric_config.GetString("collectd.host"), uint16(metric_config.GetInt("collectd.port")), metric_config.GetBool("collectd.filter_enable"), metric_config.GetStringSlice("collectd.filter_types"))
 	source.AddStorage(metric_store)
 	log.Println("Collecting collectd metrics")
 	source.Collect()

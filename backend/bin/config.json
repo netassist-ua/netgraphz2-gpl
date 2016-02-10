@@ -1,33 +1,35 @@
 {
-	"daemon": {
-		"log_file": "/var/log/netgraphz2/ng_backend.log",
-		"rpc_port": 8088,
-		"rpc_host": "127.0.0.1"
-	},
-	"ng_state": {
-		"cache": {
-			"ttl": 10000
-		},
-		"icinga": {
-			"host": "localhost",
-			"port": 6558,
-			"use_unix_socket": false,
-			"unix_socket": "",
-			"timeout_enabled": true,
-			"timeout": 5000
-		}
-	},
-	"graph": {
-			"url": "http://neo4j:changed@localhost:7474/"
-	},
-	"ng_metric": {
-		"mem_storage": {
-			"capacity": 5 
-		},
-		"collectd": {
-			"host": "0.0.0.0",
-			"port": 27015
-		}
-	}
+  "daemon": {
+    "log_file": "/var/log/netgraphz2/ng_backend.log",
+    "rpc_port": 8088,
+    "rpc_host": "127.0.0.1"
+  },
+  "ng_state": {
+    "cache": {
+      "ttl": 10000
+    },
+    "icinga": {
+      "host": "localhost",
+      "port": 6558,
+      "use_unix_socket": false,
+      "unix_socket": "",
+      "timeout_enabled": true,
+      "timeout": 5000
+    }
+  },
+  "graph": {
+    "url": "http://neo4j:changed@localhost:7474/"
+  },
+  "ng_metric": {
+    "mem_storage": {
+      "capacity": 3 
+    },
+    "collectd": {
+      "host": "0.0.0.0",
+      "port": 27015,
+      "filter_enable": true,
+      "filter_types": ["if_octets"]
+    }
+  }
 
 }

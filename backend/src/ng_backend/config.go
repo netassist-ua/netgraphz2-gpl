@@ -36,7 +36,8 @@ func init_config(path string) {
 	viper.SetDefault("ng_metric.collectd.host", "0.0.0.0")
 	viper.SetDefault("ng_metric.collectd.port", 27015)
 	viper.SetDefault("ng_metric.mem_storage.capacity", 10)
-
+	viper.SetDefault("ng_metric.collectd.filter_enable", true)
+	viper.SetDefault("ng_metric.collectd.filter_types", []string{""})
 	viper.SetDefault("graph", map[string]string{})
 	viper.SetDefault("graph.url", "http://neo4j:changed@localhost:7474/")
 
