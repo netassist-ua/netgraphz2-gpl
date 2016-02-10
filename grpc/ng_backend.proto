@@ -13,6 +13,8 @@ service Backend {
 message AllMetricsRequest {
 	required int64 n_skip = 1;
 	required int64 n_take = 2;
+        required bool filter_host_name = 3;
+        optional string host_name = 10;
 }
 
 message Metric {

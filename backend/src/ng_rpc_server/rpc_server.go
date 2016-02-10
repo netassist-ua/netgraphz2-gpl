@@ -149,7 +149,13 @@ func (s *RPCServer) GetStatus(ctx context.Context, req *rpc.StatusRequest) (*rpc
 }
 
 func (s *RPCServer) GetAllMetrics(req *rpc.AllMetricsRequest, stream rpc.Backend_GetAllMetricsServer) error {
-	metrics, err := s.metric_srv.GetAllMetrics()
+	var metrics []metric.Metric
+	var err error
+	if req.GetFilterHostName() {
+		metrics, err = s.metric_srv.GetMetricsByHost(req.GetHostName())
+	} else {
+		metrics, err = s.metric_srv.GetAllMetrics()
+	}
 	if err != nil {
 		log.Printf("Cannot get all available metrics: %v\n", err)
 		return err

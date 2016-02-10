@@ -12,7 +12,8 @@ import (
 var short_option_regexp *regexp.Regexp
 
 func init() {
-	short_option_regexp = regexp.MustCompile(`(([A-z0-9\.]+)( *?= *?)?([\w&.\-]+|\".*?\")? *?)`)
+	//short_option_regexp = regexp.MustCompile(`(?:([A-z0-9\.]+)(?: *?= *?)?([\w&.\-]+|\".*?\")? *?)`)
+	short_option_regexp = regexp.MustCompile(`(?:([A-z0-9\.]+)(?:(?: *= *)([\w&.\-]+|\".*?\")?|))`)
 }
 
 type (
@@ -35,13 +36,13 @@ func ParseEqOptions(option_str string) (map[string]string, error) {
 	options := make(map[string]string)
 	submatches := short_option_regexp.FindAllStringSubmatch(option_str, -1)
 	for _, submatch := range submatches {
-		switch len(submatch) {
-		case 4:
-			options[submatch[1]] = submatch[3]
-		case 2:
-			options[submatch[1]] = "true"
-		default:
+		if len(submatch) != 3 {
 			return options, errors.New("Failed to parse options")
+		}
+		if len(submatch[0]) > 0 && submatch[0][len(submatch[0])-1] == '=' && len(submatch[2]) == 0 {
+			options[submatch[1]] = "true"
+		} else {
+			options[submatch[1]] = submatch[2]
 		}
 	}
 	return options, nil

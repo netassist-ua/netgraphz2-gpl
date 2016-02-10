@@ -22,14 +22,21 @@ func (c *ListCmdlet) PrintUsage() {
 	c.instance.rl.Terminal.Print("options: \n")
 	c.instance.rl.Terminal.Print("skip=n_skip - skip n_skip records\n")
 	c.instance.rl.Terminal.Print("take=n_take - limit output to n_take records\n")
+	c.instance.rl.Terminal.Print("metrics options: \n")
+	c.instance.rl.Terminal.Print("host=hostname - filter by host name")
 }
 
 func (c *ListCmdlet) list_metrics(options map[string]string) error {
 	var n_skip int64 = 0
 	var n_take int64 = -1
-	for _, key := range options {
+	var filter_host bool = false
+	var host string = ""
+	for key, _ := range options {
 		var err error = nil
 		switch key {
+		case "host":
+			filter_host = true
+			host = options[key]
 		case "skip":
 			n_skip, err = strconv.ParseInt(options[key], 10, 64)
 		case "take":
@@ -43,8 +50,10 @@ func (c *ListCmdlet) list_metrics(options map[string]string) error {
 		}
 	}
 	req := &ng_rpc.AllMetricsRequest{
-		NSkip: proto.Int64(n_skip),
-		NTake: proto.Int64(n_take),
+		NSkip:          proto.Int64(n_skip),
+		NTake:          proto.Int64(n_take),
+		FilterHostName: proto.Bool(filter_host),
+		HostName:       proto.String(host),
 	}
 	stream, err := c.instance.client.GetAllMetrics(context.Background(), req)
 	if err != nil {
