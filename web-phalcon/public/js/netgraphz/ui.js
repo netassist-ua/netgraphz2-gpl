@@ -187,15 +187,16 @@ netgraphz.ui = (function(utils, store, settings, renderer, eventBus, fetcher, $)
       var node_commands = [];
       if( Array.isArray(settings.node_cxt_links) ){
         for( var i=0; i<settings.node_cxt_links.length; i++){
-          var url = settings.node_cxt_links[i].url;
-          node_commands.push({
-            content: settings.node_cxt_links[i].content,
-            select: function(e, url){
-                  var id = e.data('real_id');
-                  var node = store.getDefaultStorage().getNodeById(id);
-                  var redirectWindow = window.open(utils.format_prop_str(url, node), '_blank');
-            }
-          });
+          (function(url){
+            node_commands.push({
+              content: settings.node_cxt_links[i].content,
+              select: function(e){
+                var id = e.data('real_id');
+                var node = store.getDefaultStorage().getNodeById(id);
+                var redirectWindow = window.open(utils.format_prop_str(url, node), '_blank');
+              }
+            });
+          })(settings.node_cxt_links[i].url);
         }
       }
       renderer.getDefaultRenderer().init_context_menu(core_commands, node_commands);
