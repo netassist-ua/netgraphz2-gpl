@@ -4,6 +4,7 @@ header.navbar {
 }
 .page-header {
 	padding-top: 20px;
+	margin-bottom: 2px;
 }
 
 .ng-reg-checkbox {
@@ -12,7 +13,6 @@ header.navbar {
 
 .container {
 	width: auto;
-	padding: 0 40px 0 40px;
 }
 .toolstrip {
 	height: auto;
