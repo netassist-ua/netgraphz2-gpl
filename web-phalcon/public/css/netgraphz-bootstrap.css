@@ -4,6 +4,8 @@ header.navbar {
 }
 .page-header {
 	padding-top: 20px;
+	padding-left: 15px;
+	padding-top: 15px;
 	margin-bottom: 2px;
 }
 
@@ -13,6 +15,7 @@ header.navbar {
 
 .container {
 	width: auto;
+	padding: 0 0 0 0;
 }
 .toolstrip {
 	height: auto;

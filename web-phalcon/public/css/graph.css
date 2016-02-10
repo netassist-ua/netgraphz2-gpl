@@ -8,6 +8,10 @@
     bottom: 10px;
 }
 
+#waiter {
+	padding-left: 10px;
+}
+
 #link_panel {
     z-index: 25;
     height: 200px;
