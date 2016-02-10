@@ -116,7 +116,11 @@ netgraphz.renderer = (function(store, eventBus, tools, utils){
                     cy.clearQueue(); //workaround on slowdown of page after page inactivity...
                     _SHIFT_HOLD = false;
                   });
-
+                  $("#"+cfg.container_id).click(function(e){
+                    if(!e.ctrlKey){
+                      cy.boxSelectionEnabled(false);
+                    }
+                  });
                   eventBus.subscribe("ui", "window_keydown", function(topic, e){
                     switch(e.domEvent.keyCode){
                       case 17:
