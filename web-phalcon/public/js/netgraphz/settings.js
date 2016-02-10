@@ -1,14 +1,14 @@
 /*
-* NetGraphz2 settings
-*/
+ * NetGraphz2 settings
+ */
 
 var netgraphz =  netgraphz || {};
 netgraphz.settings = (function(){
   return {
     'init': {
-	    'node_part_size': 10,
-	    'node_part_retry_wait': 1000,
-	    'node_part_retry_times': 5
+      'node_part_size': 10,
+      'node_part_retry_wait': 1000,
+      'node_part_retry_times': 5
     },
     'communication': {
       'remote_url': 'http://127.0.0.1:3433', //URL of notifications server
@@ -31,8 +31,8 @@ netgraphz.settings = (function(){
         0: "#86D95D", //up
         1: "#FC766D", //down
         2: "#F0DE78", //warning
-	3: "#CCD5ED", //unknown
-	4: "#70C5CF", //flapping
+        3: "#CCD5ED", //unknown
+        4: "#70C5CF", //flapping
       },
       'default_node_color': '#8C8B76',
       'layout': {
@@ -58,33 +58,39 @@ netgraphz.settings = (function(){
       }
     },
     'ui': { //UI settings
+      'node_cxt_links': [
+      {
+        'content': 'test',
+        'url': 'http://test.netgraphz2/{name}'
+      }
+      ],
       'node_panel': { //node panel
         'node_panel_id': 'node_panel', //id of node panel
         'node_panel_close_button_id': 'node_panel_close', //close button element Id
         'fadeTime': 400, //time to fade out node panel, ms
         'holdTime': 2400, //time to hold panel on screen, ms
-	'waitTime': 900, //time to wait before showing up panel on node mouse hover, ms
+        'waitTime': 900, //time to wait before showing up panel on node mouse hover, ms
         'links': [
-            {
-                'title': 'Icinga',
-                'url': '/cgi-bin/icinga2-classicui/extinfo.cgi?type=1&host={icinga_name}',
-                'type': 'link', //link or popup
-                'newTab': true //open in new tab
-            },
-            {
-                'title': 'ping',
-                'url': '/cgi-bin/ping?address={ip}',
-                'type': 'popup', //link or popup
-                'popupSize': { //size of popup
-                    'width': 300,
-                    'height': 400,
-                },
-                'popupName': "fping {ip}"
-            }
+        {
+          'title': 'Icinga',
+          'url': '/cgi-bin/icinga2-classicui/extinfo.cgi?type=1&host={icinga_name}',
+          'type': 'link', //link or popup
+          'newTab': true //open in new tab
+        },
+        {
+          'title': 'ping',
+          'url': '/cgi-bin/ping?address={ip}',
+          'type': 'popup', //link or popup
+          'popupSize': { //size of popup
+            'width': 300,
+            'height': 400,
+          },
+          'popupName': "fping {ip}"
+        }
         ]
       },
       'link_panel': {
-	'link_panel_id': 'link_panel', //id of node panel
+        'link_panel_id': 'link_panel', //id of node panel
         'link_panel_close_button_id': 'link_panel_close', //close button element Id
         'fadeTime': 200, //time to fade out node panel, ms
         'holdTime': 400, //time to hold panel on screen, ms

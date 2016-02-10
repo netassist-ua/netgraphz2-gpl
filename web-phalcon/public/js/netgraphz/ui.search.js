@@ -42,6 +42,13 @@ netgraphz.ui.search = (function(ui, store, eventBus, tools, jQuery){
         }
       });
       attach_events();
+      ui.addCoreContextMenuCommand({
+        content: "Find node",
+        select: function(){
+          $(window).scrollTop(searchInput.position().top - 60);
+          searchInput.focus();
+        }
+      });
     };
 
     jQuery(function(){

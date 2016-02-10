@@ -19,7 +19,7 @@ var netgraphz = netgraphz || {};
 		ng.communication.init(ng.settings.communication); //init communcation channel
 		ng.communication.getDefaultChannel().start();
 		console.log("Initializing UI...");
-		ng.ui.init();
+		ng.ui.init(params.logged);
 		console.log("UI.Panel...");
 		ng.ui.panel.init(ng.settings.ui.node_panel, ng.settings.renderer.container_id);
 		console.log("UI.Link Panel...");

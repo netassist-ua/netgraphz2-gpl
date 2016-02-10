@@ -106,7 +106,7 @@ netgraphz.ui.panel = (function(ui, eventBus, tools, utils, jQuery){
 			for( var i = 0; i < node.status.length; i++){
 				var date = new Date(node.status[i].time * 1000);
 				var mon = {
-					source: node.status[i].source,
+                                        source: node.status.length == 1 ? "" : node.status[i].source,
 					loss: Math.round(node.status[i].loss).toString(),
 					rtt: node.status[i].rtt.toFixed(3).toString(),
 					time: utils.formatDate(date),
