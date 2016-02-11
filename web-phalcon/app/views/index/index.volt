@@ -41,12 +41,8 @@
         <label class="checkbox-inline"><input type="checkbox" id="graph_follownodes" value="">Follow problems</label>
 	<label class="checkbox-inline"><input type="checkbox" id="mute_sound" value="">Mute sound</label>
               </div>
-      <div class="toolstrip-right">
-        <span class="label label-primary">Node search by name: </span>
-        <input type="text" id="node-name-search">
-      </div>
       <div style="clear: both"></div>
-      <div class="toolstrip-color">
+      <div class="toolstrip-left toolstrip-color">
         <label class="checkbox-inline load_label" style="padding-left: 2px; margin-left: 0px">Link load: </label>
         <div class="link_load_legend_item" style="background-color: #00ff00;">0%</div>
         <div class="link_load_legend_item" style="background-color: #32ff00;">10%</div>
@@ -60,6 +56,11 @@
         <div class="link_load_legend_item" style="background-color: #ff3300; color: white;">90%</div>
         <div class="link_load_legend_item" style="background-color: #ff0000; color: white;">100%</div>
       </div>
+      <div class="toolstrip-right">
+        <span class="label label-primary">Node search by name: </span>
+        <input type="text" id="node-name-search">
+      </div>
+      <div style="clear: both"></div>
     </div>
 </div>
 {% endblock %}
