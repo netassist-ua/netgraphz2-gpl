@@ -6,6 +6,7 @@ netgraphz.ui = (function(utils, store, settings, renderer, eventBus, fetcher, $)
   var exports = {};
   var $cbFollow;
   var $cbMute;
+  var $cbDisableNodePanel;
   var $btnLayoutStart;
   var $btnLayoutStop;
   var $btnResetZoom;
@@ -223,6 +224,7 @@ netgraphz.ui = (function(utils, store, settings, renderer, eventBus, fetcher, $)
       });
       $cbFollow = $("#graph_follownodes");
       $cbMute = $("#mute_sound");
+      $cbDisableNodePanel = $("#node_panel_disable");
       $btnLayoutStart = $("#graph_layoutstart");
       $btnLayoutStop = $("#graph_layoutstop");
       $btnResetZoom = $("#graph_resetzoom");
@@ -298,6 +300,14 @@ netgraphz.ui = (function(utils, store, settings, renderer, eventBus, fetcher, $)
    */
   exports.isSoundMuted = function(){
     return $cbMute.is(":checked");
+  }
+
+  /*
+   * Returns if node panel disabled by checkbox
+   * @return {boolean} Disable node panel checkbox status
+   */
+  exports.isNodePanelDisabled = function(){
+    return $cbDisableNodePanel.is(":checked");
   }
 
   /*
