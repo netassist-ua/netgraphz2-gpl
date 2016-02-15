@@ -26,7 +26,7 @@ netgraphz.fetcher = (function(ng){
 		};
 		xhr.onerror = function(){	
 			console.error("[FETCHER] Error in AJAX: %s, code: %s", xhr.statusText, xhr.status);
-			callback(xhr.response, xhr.status, xhr.statusText);
+			callback(xhr.response, xhr.status, true);
 		};
 		//xhr.responseType = "json";
 		xhr.overrideMimeType("application/json");
