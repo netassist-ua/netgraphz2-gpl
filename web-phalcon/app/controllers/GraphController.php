@@ -10,9 +10,6 @@ use NetAssist\Models\Users;
 use NetAssist\Models\UserNodes;
 use NetAssist\Models\NodePosition;
 
-use \Exception;
-use \MongoDate;
-
 class GraphController extends ControllerBase {
 	/**
 	 * Nodes repository
