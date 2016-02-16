@@ -70,7 +70,9 @@ var netgraphz = netgraphz || {};
 
 	console.log("NetGraphz2 starting up...");
         $(function(){
-          netgraphz.ui.status_legend.init(netgraphz.settings.renderer.effective_state_palette);
+          var palette = netgraphz.settings.renderer.effective_state_palette;
+          palette[-1] = netgraphz.settings.renderer.default_node_color;
+          netgraphz.ui.status_legend.init(palette);
         });
 	ng.status.attachStatusFetchComplete(function(data){
 		console.log("Status received from server");

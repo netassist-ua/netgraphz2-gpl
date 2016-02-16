@@ -67,6 +67,7 @@
         <div class="status_legend_item status_warn">WARN</div>
         <div class="status_legend_item status_unknown">UNKNOWN</div>
         <div class="status_legend_item status_flap">FLAP</div>
+        <div class="status_legend_item status_nodata">NO DATA</div>
       </div>
 
       <div class="toolstrip-right">
