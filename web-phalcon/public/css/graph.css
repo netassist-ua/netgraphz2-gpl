@@ -35,7 +35,21 @@
   border-style: solid;
   border-width: 1px;
 }
+.toolstrip-color > .status_legend_item {
+  display: inline;
+  border-style: dotted;
+  border-width: 1px;
+}
 
+.load_label {
+  padding-left: 2px;
+  margin-left: 0px;
+}
+
+.status_label {
+  padding-left: 2px;
+  margin-left: 2px;
+}
 
 #monitoring_sources >
 div >

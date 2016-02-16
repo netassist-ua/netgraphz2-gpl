@@ -69,6 +69,9 @@ var netgraphz = netgraphz || {};
 
 
 	console.log("NetGraphz2 starting up...");
+        $(function(){
+          netgraphz.ui.status_legend.init(netgraphz.settings.renderer.effective_state_palette);
+        });
 	ng.status.attachStatusFetchComplete(function(data){
 		console.log("Status received from server");
 		console.log("Nodes: %d, Links: %d", data.counts.nodes, data.counts.links);

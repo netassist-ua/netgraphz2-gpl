@@ -17,6 +17,7 @@
 {{ javascriptInclude("js/netgraphz/updater.js") }}
 {{ javascriptInclude("js/netgraphz/renderer.js") }}
 {{ javascriptInclude("js/netgraphz/ui.js") }}
+{{ javascriptInclude("js/netgraphz/ui.status_legend.js") }}
 {{ javascriptInclude("js/netgraphz/ui.panel.js") }}
 {{ javascriptInclude("js/netgraphz/ui.link_panel.js") }}
 {{ javascriptInclude("js/netgraphz/ui.tabstop.js") }}
@@ -46,7 +47,7 @@
               </div>
       <div style="clear: both"></div>
       <div class="toolstrip-left toolstrip-color">
-        <label class="checkbox-inline load_label" style="padding-left: 2px; margin-left: 0px">Link load: </label>
+        <label class="checkbox-inline load_label">Link load: </label>
         <div class="link_load_legend_item" style="background-color: #00ff00;">0%</div>
         <div class="link_load_legend_item" style="background-color: #32ff00;">10%</div>
         <div class="link_load_legend_item" style="background-color: #65ff00;">20%</div>
@@ -59,6 +60,15 @@
         <div class="link_load_legend_item" style="background-color: #ff3300; color: white;">90%</div>
         <div class="link_load_legend_item" style="background-color: #ff0000; color: white;">100%</div>
       </div>
+      <div class="toolstrip-left toolstrip-color">
+        <label class="checkbox-inline status_label">Node status: </label>
+        <div class="status_legend_item status_up">UP</div>
+        <div class="status_legend_item status_down">DOWN</div>
+        <div class="status_legend_item status_warn">WARN</div>
+        <div class="status_legend_item status_unknown">UNKNOWN</div>
+        <div class="status_legend_item status_flap">FLAP</div>
+      </div>
+
       <div class="toolstrip-right">
         <span class="label label-primary">Node search by name: </span>
         <input type="text" id="node-name-search">
