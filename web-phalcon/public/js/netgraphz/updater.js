@@ -25,6 +25,7 @@ netgraphz.updater = (function(store, fetcher, settings){
         fetcher.fetchFromId(lastId, settings.partSize, function(nodes, code, error){
             if(error){
                 //should be restarted, but we don't mind
+                clearTimeout(_part_timer);
                 _part_timer = setTimeout(updatePartStart, 35000);
                 console.error("[updater] Error during fetch of nodes block by autoupdater");
                 console.error("[updater] Retry after 35 s");
