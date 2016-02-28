@@ -82,16 +82,16 @@ class AccountController extends ControllerBase {
   public function loginAction(){
     $form = new LoginForm();
     try {
-        if (!$this->request->isPost()) {
+      if (!$this->request->isPost()) {
             if ($this->auth->hasRememberMe()) {
                 return $this->auth->loginWithRememberMe();
             }
         } else {
-            if ($form->isValid($this->request->getPost()) == false) {
+          if ($form->isValid($this->request->getPost()) == false) {
                 foreach ($form->getMessages() as $message) {
                     $this->flash->error($message);
                 }
-            } else {
+          } else {
                 $this->auth->check(array(
                     'login' => $this->request->getPost('login'),
                     'password' => $this->request->getPost('password'),

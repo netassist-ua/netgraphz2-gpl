@@ -58,7 +58,7 @@ class LoginForm extends Form {
       $csrf = new Hidden('csrf');
       $csrf->addValidator(
              new Identical([
-             $this->security->checkToken() => 1,
+             $this->security->checkToken() => true,
              'message' => 'This request was aborted because it appears to be forged'
       ]));
       $this->add($csrf);

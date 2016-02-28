@@ -37,23 +37,19 @@ netgraphz.settings = (function(){
       'default_node_color': '#8C8B76',
       'layout': {
         'name': 'forceAtlas2',
-        'animate': true, // whether to show the layout as it's running
-        'refresh': 1, // number of ticks per frame; higher is faster but more jerky
-        'ungrabifyWhileSimulating': true, // so you can't drag nodes during layout
-        'fit': true, // on every layout reposition of nodes, fit the viewport
         'maxSimulatingTime': 12000,
-        'padding': 30, // padding around the simulation
-        'boundingBox': undefined, // constrain layout bounds; { x1, y1, x2, y2 } or { x1, y1, w, h }
         'useWebWorker': true, //tries to use WebWorker to achive better performance
         'linLogMode': false,
         'outboundAttractionDistribution': false,
         'adjustSizes': true,
+        'barnesHutOptimize': true,
+        'barnesHutTheta': 0.5,
         'spreadAfterStop': true,
         'edgeWeightInfluence': 0,
-        'scalingRatio': 4.0,
+        'scalingRatio': 5.5,
         'strongGravityMode': false,
         'gravity': 0.95,
-        'slowDown': 0.23,
+        'slowDown': 0.12,
         'infinite': true
       }
     },
@@ -62,6 +58,10 @@ netgraphz.settings = (function(){
       {
         'content': 'test',
         'url': 'http://test.netgraphz2/{name}'
+      },
+      {
+        'content': 'test2',
+        'url': 'http://test2.netgraphz2/{name}'
       }
       ],
       'node_panel': { //node panel

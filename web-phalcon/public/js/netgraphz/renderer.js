@@ -99,7 +99,7 @@ netgraphz.renderer = (function(store, eventBus, tools, utils){
       var line = tools.hsvToRgb(line_h, 100, 85);
       var t = tools.hsvToRgb(t_r, 100, 85);
       var r = tools.hsvToRgb(r_r, 100, 85);
-      
+
       var line_color =  "rgb("+ line[0]+ ',' +line[1]+ ','+line[2]+")";
       var source_arrow_color = "rgb("+r[0]+','+r[1]+','+r[2]+")";
       var target_arrow_color = "rgb("+t[0]+','+t[1]+','+t[2]+")";
@@ -287,7 +287,7 @@ netgraphz.renderer = (function(store, eventBus, tools, utils){
       }
       var css = get_edge_color_class(rx_load, tx_load, capacity, duplex);
       if( capacity >= 10){
-          css.width = Math.round(Math.log10(capacity)) + 'px';
+        css.width = Math.round(Math.log10(capacity)) + 'px';
       }
       return css;
     };
@@ -500,9 +500,10 @@ netgraphz.renderer = (function(store, eventBus, tools, utils){
           {
             'selector': 'edge',
             'style': {
-              'curve-style': 'segments',
+              'curve-style': 'haystack',
+              'haystack-radius': 0,
               'width': '3px',
-              'background-color': '#ccc',
+                'background-color': '#ccc',
             }
           },
           {

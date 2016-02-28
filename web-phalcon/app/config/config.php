@@ -17,7 +17,7 @@ return new \Phalcon\Config(array(
 	'grpc' => array (
 		'host' => 'localhost',
 		'port' => 8088,
-		'timeout' => 5000000,
+		'timeout' => 10000000,
 		'options' => array(
 		 
 		)
@@ -31,7 +31,7 @@ return new \Phalcon\Config(array(
 		'libraryDir'     => APP_PATH . '/app/library/',
 		'cacheDir'       => APP_PATH . '/app/cache/',
 		'baseUri'        => '/',
-		'cryptSalt'      => 'Thae4pijiexahfahYief3411', //should be changed!
+		'cryptSalt'      => 'Thae4pijiexahfahYief3511', //should be changed!
 		'rememberLifeTime' => 604800,
 		'failLoginWindowTime' =>  300,
 		'failLoginBlockPermament' => false,

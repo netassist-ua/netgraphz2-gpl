@@ -104,7 +104,7 @@ var netgraphz = netgraphz || {};
 				console.error("Error while getting user parameters: %s", params.error_message);
 				alert("Error while fetching user parameters, nodes will be simulated from initial positions. \n" +
 						"Contact to your system administrator to fix the problem. \n"  + (
-							"error_message" in params ? params.error_message : "No error message provided from server." ``) );
+							"error_message" in params ? params.error_message : "No error message provided from server.") );
 			}
 			update_sequence();
 		});

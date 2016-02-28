@@ -32,7 +32,7 @@ netgraphz.fetcher = (function(ng){
 		xhr.overrideMimeType("application/json");
 		xhr.open(method, url, true); //async json get request
 		xhr.setRequestHeader('Content-Type', 'application/json');
-		xhr.send(data);	
+		xhr.send(JSON.stringify(data));	
 	};
 
 	var _fetch_json_delete = function(url, data, callback) {
