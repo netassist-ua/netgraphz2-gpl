@@ -173,6 +173,9 @@ netgraphz.renderer = (function(store, eventBus, tools, utils){
         _publish_renderer_event('edge_tap', e);
       });
       cy.edges().on('select', function(e) {
+        if(cy.boxSelectionEnabled()){
+          return;
+        }
         _publish_renderer_event('edge_select', e);
       });
       cy.edges().on('unselect', function(e){
