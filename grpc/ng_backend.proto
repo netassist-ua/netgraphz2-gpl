@@ -109,6 +109,15 @@ message MetricVal {
 }
 
 message Node {
+        enum NodeType {
+              SW = 0;
+              SERVER = 1;
+              ROUTER = 2;
+              TRANSPORT = 3;
+              WIRELESS_AP = 4;
+              WIRELESS_BRIDGE = 5;
+              OTHER = 6; 
+        }
 	required int32 id = 1;
 	required string name = 2;
 	optional string address = 3;
@@ -123,6 +132,7 @@ message Node {
 	optional string serial = 12; 
 	repeated NodeState states = 13;
 	map<string, MetricValCollection> last_metric_values = 14;
+        optional NodeType type = 15;
 }
 
 message MetricValCollection {

@@ -65,6 +65,7 @@ func host_to_rpc(host *graph.Host, states []state.HostState, metrics map[string]
 		Ip6:        []byte(host.IP6.To16()),
 		DbId:       proto.Int32(int32(host.DBImportSwitchId)),
 		IcingaName: proto.String(host.IcingaName),
+		Type:       rpc.Node_NodeType(host.Type).Enum(),
 	}
 	if len(states) > 0 {
 		node.States = make([]*rpc.NodeState, len(states))
