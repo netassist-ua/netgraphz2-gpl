@@ -121,8 +121,10 @@ func read_host_row(id int64, n *types.Node) Host {
 		model       string
 		serial      string
 		num_ports   int64
+		node_type   int64
 	)
 	sw_id = read_int64_prop(n.Properties, "db_sw_id", -1)
+	node_type = read_int64_prop(n.Properties, "type", 0)
 	num_ports = read_int64_prop(n.Properties, "num_ports", -1)
 	name = read_string_prop(n.Properties, "name")
 	icinga_name = read_string_prop(n.Properties, "icinga_name")
@@ -145,6 +147,7 @@ func read_host_row(id int64, n *types.Node) Host {
 	host.Model = model
 	host.Serial = serial
 	host.NumPorts = uint16(num_ports)
+	host.Type = NodeType(node_type)
 	return host
 }
 

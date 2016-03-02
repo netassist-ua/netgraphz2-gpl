@@ -15,9 +15,20 @@ const (
 	LINK_POWERLINE       LinkType = 9
 )
 
+const (
+	NODE_SWITCH          NodeType = 0
+	NODE_SERVER          NodeType = 1
+	NODE_ROUTER          NodeType = 2
+	NODE_TRANSPORT       NodeType = 3
+	NODE_WIRELESS_AP     NodeType = 4
+	NODE_WIRELESS_BRIDGE NodeType = 5
+	NODE_OTHER           NodeType = 6
+)
+
 type (
 	//LinkType
 	LinkType int16
+	NodeType int16
 
 	//Host
 	Host struct {
@@ -33,6 +44,7 @@ type (
 		Model            string
 		Serial           string
 		NumPorts         uint16
+		Type             NodeType
 	}
 
 	//Link

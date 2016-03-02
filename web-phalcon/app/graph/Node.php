@@ -82,6 +82,11 @@
       public $metrics;
 
       /**
+       *  @var int Type of node
+       */
+      public $type;
+
+      /**
       * @var int Predefined x coordinate
       */
       public $x;
@@ -111,7 +116,8 @@
 		'icinga_name' => $this->icinga_name,
 		'status' => $this->status,
 		'metrics' => $this->metrics,
-		'ip6' => $this->ip6,
+                'ip6' => $this->ip6,
+                'type' => $this->type,
                 'x' => isset($this->x) ? $this->x : null,
                 'y' => isset($this->y) ? $this->y : null
           ];

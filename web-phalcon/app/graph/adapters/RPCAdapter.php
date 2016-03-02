@@ -84,7 +84,8 @@ class RPCAdapter implements IGraphAdapter {
 		$node->mac_address = $rpc_node->getMacAddress();
 		$node->comment = $rpc_node->getComment();
 		$node->ports_number = $rpc_node->getNumPorts();
-		$node->address = $rpc_node->getAddress();
+                $node->address = $rpc_node->getAddress();
+                $node->type = $rpc_node->getType();
 		$states = $rpc_node->getStatesList();
 		foreach ($states as $state) {
 			$node->status[] = $this->getNodeStatus($state);

@@ -426,6 +426,10 @@ netgraphz.renderer = (function(store, eventBus, tools, utils){
         if( ef_state != null ){
           classes = state_classes[ef_state];
         }
+        if (typeof n.type !== "undefined" && n.type == 3){
+          classes += " transport";
+        }
+
         g.push({
           group: 'nodes',
           data: {
@@ -448,6 +452,10 @@ netgraphz.renderer = (function(store, eventBus, tools, utils){
           var label = (typeof e.link_speed === "number" && e.link_speed > 0) ? 
             tools.dataRateBpsFormat(e.link_speed * (1000 * 1000), 0, true) : "";
           ex_links[[e.src.id, e.dst.id]] = true;
+        
+          var transport = nodes_by_id[e.src.id].type == 3 ||
+                          nodes_by_id[e.dst.id].type == 3;
+          
           g.push({
             group: 'edges',
             data: {
@@ -456,6 +464,7 @@ netgraphz.renderer = (function(store, eventBus, tools, utils){
               source: 'n' + e.src.id,
               target: 'n' + e.dst.id,
               style: _prepare_edge_style(e),
+              transport: transport,
               real_id: e.id
             }
           });
@@ -467,6 +476,9 @@ netgraphz.renderer = (function(store, eventBus, tools, utils){
         var edges = cy.edges();
         for ( var i = 0; i < edges.length; i++ ){
           edges[i].css(edges[i].data('style'));
+          if(edges[i].data("transport")){
+            edges[i].addClass("transport");
+          }
         }
       }, 1000);
 
@@ -497,7 +509,7 @@ netgraphz.renderer = (function(store, eventBus, tools, utils){
             'background-color': cfg.default_node_color, 
             'width': '10px',
             'height': '10px',
-              'font-size': '5px',
+            'font-size': '5px',
           }
         },
           {
@@ -507,6 +519,26 @@ netgraphz.renderer = (function(store, eventBus, tools, utils){
               'haystack-radius': 0,
               'width': '3px',
                 'background-color': '#ccc',
+            }
+          },
+          {
+            'selector': 'edge.transport',
+            'style': {
+              'line-style': 'dotted',
+              'line-width': '4px',
+            }
+          },
+          { 
+            selector: 'node.transport',
+            style: {
+              'background-color': 'lightgrey',
+              'shape': 'rectangle',
+              'width': 'label',
+              'height': '15px',
+              'text-valign': 'center',
+              'text-halign': 'center',
+              'text-outline-color': 'white',
+              'test-outline-width': '5px',
             }
           },
           {
