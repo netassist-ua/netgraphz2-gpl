@@ -23,6 +23,7 @@ SOFTWARE.
 ;(function( $ ){ 'use strict';
 
   var defaults = {
+    mouseRightOnly: false, //if menu can be open only by mouse left click
     menuRadius: 100, // the radius of the circular menu in pixels
     selector: 'node', // elements matching this Cytoscape.js selector will trigger cxtmenus
     commands: [ // an array of commands to list in the menu or a function that returns the array
@@ -95,7 +96,7 @@ SOFTWARE.
       });
 
       $parent.css({
-        width: containerSize + 'px',
+        mouseLeftOnlywidth: containerSize + 'px',
         height: containerSize + 'px',
         position: 'absolute',
         zIndex: 1,
@@ -328,7 +329,9 @@ SOFTWARE.
             target = this; // Remember which node the context menu is for
             var ele = this;
             var isCy = this === cy;
-
+            if( options.mouseRightOnly && e.originalEvent.button != 2 ){
+               return false; 
+            }
             if( typeof options.commands === 'function' ){
               commands = options.commands(target);
             } else {

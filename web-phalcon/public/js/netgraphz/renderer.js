@@ -395,13 +395,16 @@ netgraphz.renderer = (function(store, eventBus, tools, utils){
      * @param {object[]} node_commands - Commands for nodes
      */
     this.init_context_menu = function(core_commands, node_commands){
-      cy.cxtmenu({
-        selector: 'core',
-        commands: core_commands
-      });
-      cy.cxtmenu({
-        selector: 'node',
-        commands: node_commands
+      cy.cxtmenu(
+         {
+          selector: 'core',
+          mouseRightOnly: true,
+          commands: core_commands
+        });
+        cy.cxtmenu({
+          mouseRightOnly: true,
+          selector: 'node',
+          commands: node_commands
       });
     };
 
