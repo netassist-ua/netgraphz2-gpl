@@ -227,7 +227,7 @@ netgraphz.renderer = (function(store, eventBus, tools, utils){
       cy_node.removeClass("node_unknown");
       cy_node.removeClass("node_down");
       cy_node.removeClass("node_up");
-      cy_node.removeClass("node_loss");
+      cy_node.removeClass("node_warn");
       cy_node.removeClass("node_flap");
       var ef_state = utils.get_node_pref_effective_state(n);
       if(ef_state != null){
