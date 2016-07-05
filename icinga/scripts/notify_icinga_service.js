@@ -28,7 +28,6 @@ var notification = {
 	name: process.env.SERVICENAME,
 	state: process.env.SERVICESTATE,
 	date_long: process.env.LONGDATETIME,
-	output: process.env.HOSTOUTPUT,
 	author: process.env.NOTIFICATIONAUTHORNAME,
 	comment: process.env.NOTIFICATIONCOMMENT,
 	display_name: process.env.SERVICEDISPLAYNAME,
@@ -45,6 +44,7 @@ var notification = {
 	last_state_id: process.env.LASTSTATEID,
 	last_state_type: process.env.LASTSTATETYPE,
 	last_state_change: process.env.LASTSTATECHANGE,
+        output: process.env.SERVICEOUTPUT,
 	perfdata: process.env.PERFDATA,
 	user: {
 		email: process.env.USEREMAIL,
