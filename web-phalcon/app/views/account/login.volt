@@ -52,7 +52,8 @@
         </div>
 
         {{ form.render('csrf', ['name': this.security.getTokenKey(), 'value': this.security.getToken()]) }}
-
+        
+        {% if config.information.openSignUp %}
         <div class="form-group">
           <div class="col-md-12 control">
             <div style="border-top: 1px solid#888; padding-top:15px; font-size:85%">
@@ -61,6 +62,8 @@
             </div>
           </div>
         </div>
+        {% endif %}
+
       </form>
 
 
