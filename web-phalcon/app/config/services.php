@@ -14,9 +14,11 @@ use Phalcon\Db\Adapter\Pdo\Mysql as DbAdapter;
 use Phalcon\Mvc\View\Engine\Volt as VoltEngine;
 use Phalcon\Mvc\Model\Metadata\Memory as MetaDataAdapter;
 use Phalcon\Flash\Direct as Flash;
-
-
+use Phalcon\Mvc\Dispatcher;
 use Phalcon\Session\Adapter\Files as SessionAdapter;
+
+//NetAssist components
+
 use NetAssist\Graph\ConnectionBuilder as GraphConnectionBuilder;
 use NetAssist\Shared\Auth as Auth;
 
@@ -28,6 +30,14 @@ $di = new FactoryDefault();
 $di->set('config', function () use ($config) {
   return $config;
 }, true);
+
+
+//Dispatcher registration
+$di->set('dispatcher', function () {
+    $dispatcher = new Dispatcher();
+    $dispatcher->setDefaultNamespace("NetAssist\\Controllers");
+    return $dispatcher;
+});
 
 /**
 * The URL component is used to generate all kind of urls in the application

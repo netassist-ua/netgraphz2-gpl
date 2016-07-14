@@ -19,8 +19,9 @@ var _ratelimit_throttle_timer = null;
 var _ratelimit_req_curr = 0;
 
 
-/* @typedef AggEventObj
- * @type {object}
+/**
+ * @typedef AggEventObj
+ * @type object
  * @property {object[]} events - Aggreated events
  * @property {number} timer - Aggreation timer identifier
  * @property {number} type - Aggregation type {0 - host, 1 - service }

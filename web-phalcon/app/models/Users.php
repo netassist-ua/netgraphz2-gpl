@@ -9,7 +9,7 @@ use Phalcon\Mvc\Model\Validator\Email as EmailValidator;
 */
 class Users extends Collection {
   /**
-  * @var  \MongoId Object identifier
+  * @var \MongoId Object identifier
   */
   public $_id;
 
@@ -29,17 +29,17 @@ class Users extends Collection {
   public $email;
 
   /**
-  * @var MongoDate Last user login
+  * @var \MongoDate Last user login
   */
   public $lastLoginDate;
 
   /**
-  * @var MongoDate Failed login attempt window start
+  * @var \MongoDate Failed login attempt window start
   */
   public $failedLoginWindowStartDate;
 
   /**
-  * @var MongoDate Last failed login attempt date
+  * @var \MongoDate Last failed login attempt date
   */
   public $failedLoginLastDate;
 

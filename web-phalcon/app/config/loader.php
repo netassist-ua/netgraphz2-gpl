@@ -12,7 +12,8 @@ $loader->registerDirs(
 	)
 );
 $loader->registerNamespaces(
-	array(
+  array(
+                'NetAssist\Controllers' => $config->application->controllersDir,
 		'NetAssist\Graph' => APP_PATH . '/app/graph/',
 		'NetAssist\Graph\Repositories\Interfaces' => APP_PATH . '/app/graph/repositories/interfaces/',
 		'NetAssist\Graph\Repositories\GRPC' => APP_PATH . '/app/graph/repositories/grpc/',

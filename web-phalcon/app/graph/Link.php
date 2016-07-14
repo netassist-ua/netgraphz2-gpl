@@ -2,9 +2,9 @@
 namespace NetAssist\Graph;
 
 /**
-*  Represents graph link between nodes
-*  @property_read int $id Identifier of record in graph database
-*/
+ *  Represents graph link between nodes
+ *  @property-read int $id Identifier of record in graph database
+ */
 class Link implements \JsonSerializable {
   /**
    *  @var int Identifier record in database
@@ -47,9 +47,9 @@ class Link implements \JsonSerializable {
   }
 
   /**
-  * Performs JSON serialzation preparation
-  * @return array Repsentation of object for JSON serializer
-  */
+   * Performs JSON serialzation preparation
+   * @return array Repsentation of object for JSON serializer
+   */
   public function jsonSerialize() {
     return [
       'id' => $this->_id,
@@ -71,9 +71,9 @@ class Link implements \JsonSerializable {
   }
 
   /**
-  * Constructor
-  * @param int Identifier of link in database
-  */
+   * Constructor
+   * @param int Identifier of link in database
+   */
   function __construct($id){
     $this->_id = $id;
   }

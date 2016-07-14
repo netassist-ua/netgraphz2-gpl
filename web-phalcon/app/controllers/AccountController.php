@@ -1,4 +1,6 @@
 <?php
+
+namespace NetAssist\Controllers;
 use Phalcon\Mvc\View;
 use NetAssist\Forms\UserSignupForm;
 use NetAssist\Forms\LoginForm;
@@ -11,9 +13,10 @@ use NetAssist\Models\Users;
  */
 class AccountController extends ControllerBase {
   /**
-   *  Hooks executing before route executed.
+   *  Executes before executing any route.
    *  Handles sign up policy. Blocks page if open sign up disabled by configuration.
-   *  @param \Phalcon\Mvc\Dispatcher  $dispatcher Phalcon MVC application dispatcher instance
+   *  @param \Phalcon\Mvc\Dispatcher $dispatcher Phalcon application dispatcher instance
+   *  @return void
    */
   public function beforeExecuteRoute($dispatcher){
     $di = $dispatcher->getDI();
@@ -26,8 +29,7 @@ class AccountController extends ControllerBase {
   /**
    *  Search user in database by conditions and returns result if any user found
    *  @param array $conditions MongoDB conditions query to search in users collection
-   *  @return boolean True if any user found by conditions query
-   *
+   *  @return bool True if any user found by conditions query
    */
   private function isUserFoundByConditions($conditions){
     if(!is_array($conditions)){

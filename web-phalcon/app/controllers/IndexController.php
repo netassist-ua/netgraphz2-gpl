@@ -1,29 +1,26 @@
 <?php
 
+namespace NetAssist\Controllers;
+
+/**
+ *  Index controller. Handles index page requests (/ and /Index)
+ */
 class IndexController extends ControllerBase
 {
-    /**
-     * Nodes repository
-     * @var \NetAssist\Graph\Repositories\Interfaces\INodesRepository
-     */
-    protected $_nodesRepo;
 
     /**
-     * Links repository
-     * @var \NetAssist\Graph\Repositories\Interfaces\ILinksRepository
+     *  Initializes controller
      */
-
-    protected $_linksRepo;
-
     public function initialize() {
-        $this->_nodesRepo = $this->di->get('graphNodesRepository');
-        $this->_linksRepo = $this->di->get('graphLinksRepository');
         parent::initialize();
-     }
+    }
 
+    /**
+     *    Handles main page request.
+     *    Renders Index page of application.
+     */
     public function indexAction()
     {
-        
     }
 
 }
